@@ -1,14 +1,14 @@
-
 package common
 
 import (
 	"math/big"
-	"reflect"
 	"math/rand"
+	"reflect"
 )
 
-const HashLength = 32;
-type Hash [HashLength]byte;
+const HashLength = 32
+
+type Hash [HashLength]byte
 
 func (h Hash) Str() string   { return string(h[:]) }
 func (h Hash) Bytes() []byte { return h[:] }

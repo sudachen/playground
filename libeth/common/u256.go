@@ -1,4 +1,3 @@
-
 package common
 
 import (
@@ -10,13 +9,11 @@ func CheckedU256Value(value *big.Int) (*big.Int, error) {
 }
 
 func CheckedU256Add(value *big.Int, diff *big.Int) (*big.Int, error) {
-	v := new(big.Int).Add(value,diff)
+	v := new(big.Int).Add(value, diff)
 	return CheckedU256Value(v)
 }
-
 
 func CheckedU256Sub(value *big.Int, diff *big.Int) (*big.Int, error) {
-	v := new(big.Int).Sub(value,diff)
+	v := new(big.Int).Sub(value, diff)
 	return CheckedU256Value(v)
 }
-

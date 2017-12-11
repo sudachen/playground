@@ -1,42 +1,52 @@
-
 package common
 
 import (
-	"math/big"
-	"fmt"
 	"errors"
+	"fmt"
+	"math/big"
 )
 
 type Account struct {
-	State State
+	State   State
 	Address Address
 }
 
 func (a Account) String() string {
-	return fmt.Sprintf("Account{%s}",a.Address.Hex())
+	return fmt.Sprintf("Account{%s}", a.Address.Hex())
 }
 
-func (a *Account) Balance() *big.Int { return a.State.GetBalance(a.Address) }
-func (a *Account) Nonce() uint64 { return a.State.GetNonce(a.Address) }
-func (a *Account) Exists() bool { return a.State.Exists(a.Address) }
-func (a *Account) HasSuicide() bool { return a.State.HasSuicide(a.Address) }
-func (a *Account) Code() []byte { return a.State.GetCode(a.Address) }
-func (a *Account) CodeHash() Hash { return a.State.GetCodeHash(a.Address) }
-func (a *Account) CodeSize() int { return a.State.GetCodeSize(a.Address) }
+func (a *Account) Balance() *big.Int   { return a.State.GetBalance(a.Address) }
+func (a *Account) Nonce() uint64       { return a.State.GetNonce(a.Address) }
+func (a *Account) Exists() bool        { return a.State.Exists(a.Address) }
+func (a *Account) HasSuicide() bool    { return a.State.HasSuicide(a.Address) }
+func (a *Account) Code() []byte        { return a.State.GetCode(a.Address) }
+func (a *Account) CodeHash() Hash      { return a.State.GetCodeHash(a.Address) }
+func (a *Account) CodeSize() int       { return a.State.GetCodeSize(a.Address) }
 func (a *Account) Immutable() *Account { return a }
 
-func (a *Account) GetValue(key Hash) (Hash,bool) {
-	return a.State.GetValue(a.Address,key)
+func (a *Account) GetValue(key Hash) (Hash, bool) {
+	return a.State.GetValue(a.Address, key)
 }
 
-func (a *Account) ProcessValues(f func(Hash,Hash)error, changedOnly bool) error {
-	return a.State.ProcessValues(a.Address,f,changedOnly)
+func (a *Account) ProcessValues(f func(Hash, Hash) error, changedOnly bool) error {
+	return a.State.ProcessValues(a.Address, f, changedOnly)
 }
 
-func NewAccount(address Address, state State) *Account { return &Account{ state, address } }
+func (a *Account) IsEqualTo(b *Account) bool {
+	return a.Address.Cmp(b.Address) == 0 &&
+		a.Exists() == b.Exists() &&
+		a.Balance().Cmp(b.Balance()) == 0 &&
+		a.Nonce() == b.Nonce() &&
+		a.HasSuicide() == b.HasSuicide() &&
+		a.CodeHash() == b.CodeHash() &&
+		a.CodeSize() == b.CodeSize()
+	//a.Code(),b.Code()
+}
+
+func NewAccount(address Address, state State) *Account { return &Account{state, address} }
 
 type MutableAccount struct {
-	State MutableState
+	State   MutableState
 	Address Address
 }
 
@@ -50,7 +60,7 @@ func (a *MutableAccount) CodeSize() int     { return a.State.GetCodeSize(a.Addre
 
 func (a *MutableAccount) SetBalance(balance *big.Int) error {
 	if checkedValue, err := CheckedU256Value(balance); err != nil {
-		return NewAccountError(a.Immutable(),err)
+		return NewAccountError(a.Immutable(), err)
 	} else {
 		a.State.SetBalance(a.Address, checkedValue)
 		return nil
@@ -59,8 +69,8 @@ func (a *MutableAccount) SetBalance(balance *big.Int) error {
 
 func (a *MutableAccount) AddBalance(diff *big.Int) error {
 	balance := a.State.GetBalance(a.Address)
-	if newBalance, err := CheckedU256Add(balance,diff); err != nil {
-		return NewAccountError(a.Immutable(),err)
+	if newBalance, err := CheckedU256Add(balance, diff); err != nil {
+		return NewAccountError(a.Immutable(), err)
 	} else {
 		a.State.SetBalance(a.Address, newBalance)
 		return nil
@@ -69,34 +79,36 @@ func (a *MutableAccount) AddBalance(diff *big.Int) error {
 
 func (a *MutableAccount) SubBalance(diff *big.Int) error {
 	balance := a.State.GetBalance(a.Address)
-	if newBalance, err := CheckedU256Sub(balance,diff); err != nil {
-		return NewAccountError(a.Immutable(),err)
+	if newBalance, err := CheckedU256Sub(balance, diff); err != nil {
+		return NewAccountError(a.Immutable(), err)
 	} else {
 		a.State.SetBalance(a.Address, newBalance)
 		return nil
 	}
 }
 
-func (a *MutableAccount) SetNonce(nonce uint64) { a.State.SetNonce(a.Address,nonce) }
-func (a *MutableAccount) SetCode(code []byte) error { return a.State.SetCode(a.Address,code) }
-func (a *MutableAccount) SetValue(key Hash, value Hash) { a.State.SetValue(a.Address,key,value)}
-func (a *MutableAccount) Suicide() bool { return a.State.Suicide(a.Address) }
+func (a *MutableAccount) SetNonce(nonce uint64)         { a.State.SetNonce(a.Address, nonce) }
+func (a *MutableAccount) SetCode(code []byte) error     { return a.State.SetCode(a.Address, code) }
+func (a *MutableAccount) SetValue(key Hash, value Hash) { a.State.SetValue(a.Address, key, value) }
+func (a *MutableAccount) Suicide() bool                 { return a.State.Suicide(a.Address) }
 
-func (a *MutableAccount) GetValue(key Hash) (Hash,bool) {
-	return a.State.GetValue(a.Address,key)
+func (a *MutableAccount) GetValue(key Hash) (Hash, bool) {
+	return a.State.GetValue(a.Address, key)
 }
 
-func (a *MutableAccount) ProcessValues(f func(Hash,Hash)error, changedOnly bool) error {
-	return a.State.ProcessValues(a.Address,f,changedOnly)
+func (a *MutableAccount) ProcessValues(f func(Hash, Hash) error, changedOnly bool) error {
+	return a.State.ProcessValues(a.Address, f, changedOnly)
 }
 
-func NewMutableAccount(address Address, state MutableState) *MutableAccount { return &MutableAccount{state, address}}
+func NewMutableAccount(address Address, state MutableState) *MutableAccount {
+	return &MutableAccount{state, address}
+}
 func (a *MutableAccount) Immutable() *Account { return &Account{a.State.Immutable(), a.Address} }
 
 func CreateNewAccount(address Address, balance *big.Int, nonce uint64, state MutableState) *MutableAccount {
 	if state.Create(address) {
-		state.SetBalance(address,balance)
-		state.SetNonce(address,nonce)
+		state.SetBalance(address, balance)
+		state.SetNonce(address, nonce)
 		return &MutableAccount{state, address}
 	}
 	return nil
@@ -108,16 +120,16 @@ type AccountError struct {
 }
 
 func (e *AccountError) Error() string {
-	return fmt.Sprintf("%v: %v",e.Account,e.Reason)
+	return fmt.Sprintf("%v: %v", e.Account, e.Reason)
 }
 
 func NewAccountError(a *Account, err interface{}) error {
 	switch err.(type) {
 	case error:
-		return &AccountError{*a,err.(error)}
+		return &AccountError{*a, err.(error)}
 	case string:
-		return &AccountError{*a,errors.New(err.(string))}
+		return &AccountError{*a, errors.New(err.(string))}
 	default:
-		return &AccountError{*a,fmt.Errorf("%s",err)}
+		return &AccountError{*a, fmt.Errorf("%s", err)}
 	}
 }

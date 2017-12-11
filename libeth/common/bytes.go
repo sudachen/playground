@@ -1,9 +1,10 @@
-
 package common
 
 import (
 	"encoding/hex"
 )
+
+const NulStr = ""
 
 func Bytes2Hex(d []byte) string {
 	return hex.EncodeToString(d)
