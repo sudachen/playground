@@ -1,30 +1,19 @@
-package tests
+package classic
 
 import (
 	"errors"
-	"fmt"
 	"github.com/sudachen/playground/libeth/common"
 	"github.com/sudachen/playground/libeth/crypto"
 	"github.com/sudachen/playground/libeth/state"
 	"math/big"
-	"os"
 	"path/filepath"
 	"testing"
+	"bytes"
+	"bufio"
+	"fmt"
 )
 
-func equal(a []byte, b []byte) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, x := range b {
-		if a[i] != x {
-			return false
-		}
-	}
-	return true
-}
-
-func RunStateTest(t *testing.T, test map[string]interface{}, name string, rules *common.RuleSet, evm common.VM) error {
+func StateTest(test map[string]interface{}, name string, rules *common.RuleSet, evm common.VM, t *testing.T) error {
 	var pre common.State
 	var post common.State
 	var tx *common.Transaction
@@ -62,74 +51,55 @@ func RunStateTest(t *testing.T, test map[string]interface{}, name string, rules 
 	}
 
 	out, _, st, err := evm.Execute(tx, blockInfo, pre)
-	failed := false
+
+	itWasFailed := 0
 	adrs := state.CompareWithoutSuicides(st, post)
+
 	if len(adrs) != 0 {
-		failed = true
-		for _, a := range adrs {
-			t.Error(state.DumpDiff(st, post, a))
+		itWasFailed |= FailedByState
+	}
+	if out != nil && !equal(expectedOut, out) {
+		itWasFailed |= FailedByRet
+	}
+
+	if itWasFailed != 0 {
+		bf := new(bytes.Buffer)
+		wr := bufio.NewWriter(bf)
+		fmt.Fprintf(wr,"\n%s => execution result does not match to expected\n",name)
+		if (itWasFailed & FailedByRet) != 0 {
+			wr.WriteString("returned bad value\n")
+			fmt.Fprintf(wr,"\treturned: %s\n",common.ToHex(out))
+			fmt.Fprintf(wr,"\texpected: %s\n",common.ToHex(expectedOut))
 		}
-		t.Error("-- pre --")
-		t.Error(state.Dump(pre))
-		t.Error("-- result --")
-		t.Error(state.Dump(st))
-		t.Error("-- expected --")
-		t.Error(state.Dump(post))
-	}
-	if !equal(expectedOut, out) {
-		failed = true
-	}
-	if failed {
+		if (itWasFailed & FailedByState) != 0 {
+			for _, a := range adrs {
+				state.WriteDiff(wr,st,post,a)
+			}
+			wr.WriteString("\n-- before --\n")
+			state.WriteDump(wr,pre,"\t")
+			wr.WriteString("\n-- after --\n")
+			state.WriteDump(wr,st,"\t")
+			wr.WriteString("\n-- expected --\n")
+			state.WriteDump(wr,post,"\t")
+			wr.WriteString("\n")
+			wr.Flush()
+		}
+		t.Error(bf.String())
 		return errors.New("final state des not match to expected")
 	}
 
 	return nil
 }
 
-func RunStateTests(t *testing.T, nfo *Nfo, tfo *Tfo) {
-
-	skipNames := make(map[string]bool)
-	for _, x := range nfo.Skip {
-		skipNames[x] = true
-	}
-
-	path := filepath.Join(tfo.RootDir, nfo.File)
-	var tests map[string]interface{}
-	if err := ReadJsonFile(path, &tests); err != nil {
-		t.Fatal(err)
-	}
-	keys := SortedMapKeys(tests)
-	if nfo.SkipTo != common.NulStr {
-		for len(keys) != 0 && keys[0] != nfo.SkipTo {
-			keys = keys[1:]
-		}
-	}
-	for _, k := range keys {
-		if !skipNames[k] {
-			oneTest := tests[k].(map[string]interface{})
-			fmt.Fprintf(os.Stderr, "test %s/%s\n", nfo.Name, k)
-			if err := RunStateTest(t, oneTest, k, nfo.Rules, tfo.NewVM()); err != nil {
-				t.Fatal(err)
-			}
-		}
-	}
+func RunAllStateTests(tfo *Tfo, t *testing.T) {
+	tfo.RunAll(StateTests,t)
 }
 
-func RunClassicStateTests(t *testing.T, tfo *Tfo) {
-	for _, x := range ClassicStateTests {
-		if !x.Pass {
-			if x.Proc != nil {
-				x.Proc(t, x, tfo)
-			} else {
-				t.Run(x.Name, func(t *testing.T) {
-					tfo.Proc(t, x, tfo)
-				})
-			}
-		}
-	}
+func RunOneStateTest(tfo *Tfo, name string, t *testing.T) {
+	tfo.RunOne(StateTests,name,t)
 }
 
-var ClassicStateTests = []*Nfo{
+var StateTests = []*Nfo{
 	&Nfo{
 		Pass:   false,
 		Name:   "StateExample",

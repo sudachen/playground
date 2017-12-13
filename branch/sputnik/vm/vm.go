@@ -79,25 +79,17 @@ func (*nvm) Execute(tx *common.Transaction, bi *common.BlockInfo, st common.Stat
 
 	currentNumber := bi.Number
 
-	rules := *defaultRuleset
-	if bi.RuleSet != nil {
-		if bi.RuleSet.HomesteadBlock != nil {
-			rules.HomesteadBlock = bi.RuleSet.HomesteadBlock
-		}
-		if bi.RuleSet.HomesteadGasRepriceBlock != nil {
-			rules.HomesteadGasRepriceBlock = bi.RuleSet.HomesteadGasRepriceBlock
-		}
-		if bi.RuleSet.DiehardBlock != nil {
-			rules.DiehardBlock = bi.RuleSet.DiehardBlock
-		}
+	rules := bi.RuleSet
+	if rules == nil {
+		rules = defaultRuleset
 	}
 
 	var vm *sputnikvm.VM
-	if currentNumber.Cmp(rules.DiehardBlock) >= 0 {
+	if rules.DiehardBlock != nil && currentNumber.Cmp(rules.DiehardBlock) >= 0 {
 		vm = sputnikvm.NewEIP160(&vmtx, &vmheader)
-	} else if currentNumber.Cmp(rules.HomesteadGasRepriceBlock) >= 0 {
+	} else if rules.HomesteadGasRepriceBlock != nil && currentNumber.Cmp(rules.HomesteadGasRepriceBlock) >= 0 {
 		vm = sputnikvm.NewEIP150(&vmtx, &vmheader)
-	} else if currentNumber.Cmp(rules.HomesteadBlock) >= 0 {
+	} else if rules.HomesteadBlock != nil && currentNumber.Cmp(rules.HomesteadBlock) >= 0 {
 		vm = sputnikvm.NewHomestead(&vmtx, &vmheader)
 	} else {
 		vm = sputnikvm.NewFrontier(&vmtx, &vmheader)
@@ -190,5 +182,5 @@ Loop:
 	usedGas := vm.UsedGas()
 
 	vm.Free()
-	return []byte{}, usedGas, rs.Freeze(), nil
+	return nil, usedGas, rs.Freeze(), nil
 }

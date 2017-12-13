@@ -1,61 +1,58 @@
 package state
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
 	"github.com/sudachen/playground/libeth/common"
+	"io"
 )
 
-func Dump(st common.State) string {
-	var bf bytes.Buffer
-	wr := bufio.NewWriter(&bf)
+func WriteDump(wr io.Writer, st common.State, pfx string) {
 	addresses := st.Addresses(false)
-	fmt.Fprintf(wr, "immutable state: %d accounts\n", len(addresses))
+	fmt.Fprintf(wr, "%sSTATE HAS %d ACCOUNTS:\n", pfx, len(addresses))
 	for i, a := range addresses {
 		o := common.Account{st, a}
-		fmt.Fprintf(wr, "%d\tAddress: %v\n", i, o.Address.Hex())
-		fmt.Fprintf(wr, "\tBalance: %v\n", o.Balance())
-		fmt.Fprintf(wr, "\tNonce: %v\n", o.Nonce())
-		fmt.Fprintf(wr, "\tSuicided: %v\n", o.HasSuicide())
-		fmt.Fprintf(wr, "\tCode: %v\n", common.ToHex(o.Code()))
-		fmt.Fprintf(wr, "\tHash: %v\n", o.CodeHash().Hex())
+		if i != 0 {
+			fmt.Fprintf(wr,"%s--------\n",pfx)
+		}
+		fmt.Fprintf(wr, "%s%d\tAddress: %v\n", pfx, i, o.Address.Hex())
+		fmt.Fprintf(wr, "%s\tBalance: %v\n", pfx, o.Balance())
+		fmt.Fprintf(wr, "%s\tNonce: %v\n", pfx, o.Nonce())
+		fmt.Fprintf(wr, "%s\tSuicided: %v\n", pfx, o.HasSuicide())
+		fmt.Fprintf(wr, "%s\tCode: %v\n", pfx, common.ToHex(o.Code()))
+		fmt.Fprintf(wr, "%s\tHash: %v\n", pfx, o.CodeHash().Hex())
 		o.ProcessValues(func(k, v common.Hash) error {
-			fmt.Fprintf(wr, "\t\t%v => %v\n", k.Hex(), v.Hex())
+			fmt.Fprintf(wr, "%s\t\t%v => %v\n", pfx, k.Hex(), v.Hex())
 			return nil
 		}, false)
-		wr.Flush()
 	}
-	return bf.String()
 }
 
-func DumpDiff(st common.State, etalonSt common.State, address common.Address) string {
-	o := common.Account{st, address}
-	e := common.Account{etalonSt, address}
-	if o.Exists() != e.Exists() {
-		if !o.HasSuicide() && !e.HasSuicide() {
-			var oExists = "exists"
-			var eExists = "it have not"
-			if !o.Exists() {
-				oExists = "does not exist"
-				eExists = "it have to be"
+func WriteDiff(wr io.Writer, st common.State, etalonSt common.State, addresses ...common.Address) {
+	for _, a := range addresses {
+		o := common.Account{st, a}
+		e := common.Account{etalonSt, a}
+		if o.Exists() != e.Exists() {
+			if !o.HasSuicide() && !e.HasSuicide() {
+				var oExists= "exists"
+				var eExists= "it have not"
+				if !o.Exists() {
+					oExists = "does not exist"
+					eExists = "it have to be"
+				}
+				fmt.Fprintf(wr,"address %s %s but %s\n",
+					a.Hex(), oExists, eExists)
 			}
-			return fmt.Sprintf("address %s %s but %s",
-				address.Hex(), oExists, eExists)
+		} else {
+			if o.Balance().Cmp(e.Balance()) != 0 {
+				fmt.Fprintf(wr,"balance of %s is %v but have to be %v\n",
+					a.Hex(), o.Balance(), e.Balance())
+			}
+			if o.Nonce() != e.Nonce() {
+				fmt.Fprintf(wr, "nonce of %s is %v but have to be %v\n",
+					a.Hex(), o.Nonce(), e.Nonce())
+			}
 		}
-	} else {
-		r := ""
-		if o.Balance().Cmp(e.Balance()) != 0 {
-			r = r + fmt.Sprintf("balance of %s is %v but have to be %v\n",
-				address.Hex(), o.Balance(), e.Balance())
-		}
-		if o.Nonce() != e.Nonce() {
-			r = r + fmt.Sprintf("nonce of %s is %v but have to be %v\n",
-				address.Hex(), o.Nonce(), e.Nonce())
-		}
-		return r
 	}
-	return ""
 }
 
 func Compare(sta common.State, stb common.State) []common.Address {

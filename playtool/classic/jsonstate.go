@@ -1,4 +1,4 @@
-package tests
+package classic
 
 import (
 	"errors"
