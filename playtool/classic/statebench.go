@@ -2,7 +2,7 @@ package classic
 
 import (
 	"github.com/sudachen/playground/libeth/common"
-	"github.com/sudachen/playground/benchmark"
+	"github.com/sudachen/benchmark"
 	"math/big"
 	"errors"
 	"github.com/sudachen/playground/libeth/state"

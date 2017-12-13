@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"github.com/sudachen/playground/playtool"
 	"github.com/sudachen/playground/playtool/classic"
-	"github.com/sudachen/playground/benchmark"
+	"github.com/sudachen/benchmark"
 	"github.com/sudachen/playground/branch/classic/vm"
 
 	// disable some tests

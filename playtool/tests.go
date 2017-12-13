@@ -13,7 +13,7 @@ import (
 	"testing"
 	"strings"
 	"path/filepath"
-	"github.com/sudachen/playground/benchmark"
+	"github.com/sudachen/benchmark"
 )
 
 type Nfo struct {

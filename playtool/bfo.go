@@ -2,7 +2,7 @@
 package playtool
 
 import (
-	"github.com/sudachen/playground/benchmark"
+	"github.com/sudachen/benchmark"
 	"github.com/sudachen/playground/libeth/common"
 	"strings"
 )
