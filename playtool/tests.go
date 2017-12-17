@@ -95,10 +95,6 @@ func (nfo *Nfo) RunOne(tfo *Tfo, name string, t *testing.T) {
 
 func (nfo *Nfo) getRunnbale(bfo *Bfo,t *benchmark.T) func(name string,test map[string]interface{})error {
 	return func(name string,test map[string]interface{})error {
-		//fmt.Printf("%s\n",name)
-		t.Resume()
-		defer t.Pause()
-
 		return t.Run(name,func(t0 *benchmark.T)error {
 			if err := bfo.Proc(bfo.Repeat,test, name, nfo.Rules, bfo.NewVM(), t0); err != nil {
 				t.Error(err)

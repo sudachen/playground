@@ -4,39 +4,14 @@ import (
 	"github.com/sudachen/playground/libeth/common"
 	"github.com/sudachen/benchmark"
 	"math/big"
-	"errors"
-	"github.com/sudachen/playground/libeth/state"
 	"github.com/sudachen/playground/libeth/crypto"
 )
 
 func StateBench(repeat int, test map[string]interface{}, name string, rules *common.RuleSet, evm common.VM, t *benchmark.T) error {
 	var pre common.State
-	var post common.State
 	var tx *common.Transaction
 	var secretKey []byte
-	var expectedOut []byte
 	var err error
-
-	t.Pause()
-	defer t.Resume()
-
-	if pre, err = NewPreState(test); err != nil {
-		return err
-	}
-	if post, err = NewClassicPostState(test); err != nil {
-		return err
-	}
-	if tx, err = GetTransaction(test); err != nil {
-		return err
-	}
-	if expectedOut, err = GetTransactionOut(test); err != nil {
-		return err
-	}
-	if secretKey, err = GetSecretKey(test); err != nil {
-		return err
-	}
-
-	tx.From = crypto.PubkeyToAddress(crypto.ToECDSA(secretKey).PublicKey)
 
 	blockInfo := &common.BlockInfo{
 		Blockhash: func(n *big.Int) common.Hash {
@@ -45,28 +20,23 @@ func StateBench(repeat int, test map[string]interface{}, name string, rules *com
 		RuleSet: rules,
 	}
 
-	if err = FillBlockInfo(test, blockInfo); err != nil {
+	if pre, err = NewPreState(test); err == nil {
+		if tx, err = GetTransaction(test); err == nil {
+			if secretKey, err = GetSecretKey(test); err == nil {
+				if err = FillBlockInfo(test, blockInfo); err == nil {
+					tx.From = crypto.PubkeyToAddress(crypto.ToECDSA(secretKey).PublicKey)
+				}
+			}
+		}
+	}
+
+	if err != nil {
 		return err
 	}
 
 	for i := 0; i <= repeat; i++ {
-		t.Resume()
-		out, _, st, _:= evm.Execute(tx, blockInfo, pre)
-		t.Pause()
-
-		itWasFailed := 0
-		adrs := state.CompareWithoutSuicides(st, post)
-
-		if len(adrs) != 0 {
-			itWasFailed |= FailedByState
-		}
-		if out != nil && !equal(expectedOut, out) {
-			itWasFailed |= FailedByRet
-		}
-
-		if itWasFailed != 0 {
-			return errors.New("final state des not match to expected")
-		}
+		t.Start(benchmark.PProfNoGC)
+		evm.Execute(tx, blockInfo, pre)
 	}
 
 	return nil
