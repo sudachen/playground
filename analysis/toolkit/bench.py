@@ -161,7 +161,7 @@ def execute(root, the_branch, the_bench, temp=None):
     return Result(the_branch.label, load_results(stdout))
 
 
-def run_benchmarks(bench_label, branches, root=util.root_dir(), temp=None):
+def run_benchmark(bench_label, branches, root=util.root_dir(), temp=None):
     "it does benchmark for specified branches or for ALL branches if specified ALL"
     the_bench = look_for(bench_label)
     results = (execute(root, b, the_bench, temp) for b in branch.list_of(branches))
