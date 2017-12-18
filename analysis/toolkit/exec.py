@@ -65,7 +65,11 @@ class Executor(object):
 
     def run(self,*args):
         try:
-            util.verbose("in the dir {}",self.workdir)
+            gopath = os.getenv("GOPATH",None)
+            if gopath is not None and self.workdir.startswith(gopath):
+                util.verbose("in the dir $(GOPATH){}",self.workdir[len(gopath):])
+            else:
+                util.verbose("in the dir {}",self.workdir)
             util.verbose("\texecuting: {}"," ".join(args))
             with subprocess.Popen(args,stdout=self.stdout,stderr=self.stderr,env=self.env,cwd=self.workdir) as p:
                 result = p.wait()

@@ -73,6 +73,8 @@ class Percent(object):
 
     def __init__(self, label, base, value):
         def percent_of(b, v):
+            if b == 0: b = 1
+            if v == 0: v = 1
             return int(v/b*100)
         self.label = label
         self.passive = percent_of(base.total-base.active, value.total-value.active)
