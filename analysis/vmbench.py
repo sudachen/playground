@@ -2,6 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+from IPython.display import Markdown, display
 import toolkit as tk
 
 
@@ -61,6 +62,11 @@ def plot_pprof2(label1, p1, label2, p2):
             df.plot(kind='barh', ax=ax[i]).invert_yaxis()
     plt.tight_layout()
     plt.show()
+
+
+def plot_pprof(title, what, Q, base, target):
+    display(Markdown("# "+title))
+    plot_pprof2(base,Q[0][0].pprof[what],target,Q[0][1].pprof[what])
 
 
 def run_benchmark(*branches, temp=None):
