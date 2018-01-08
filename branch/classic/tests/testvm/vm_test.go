@@ -1,11 +1,12 @@
 package testvm
 
 import (
+	"path/filepath"
+	"testing"
+
 	"github.com/sudachen/playground/branch/classic/vm"
 	"github.com/sudachen/playground/playtool"
 	"github.com/sudachen/playground/playtool/classic"
-	"path/filepath"
-	"testing"
 )
 
 var tfo = &playtool.Tfo{
@@ -15,5 +16,5 @@ var tfo = &playtool.Tfo{
 }
 
 func TestState(t *testing.T) {
-	classic.RunAllStateTests(tfo,t)
+	classic.RunAllStateTests(tfo, t)
 }

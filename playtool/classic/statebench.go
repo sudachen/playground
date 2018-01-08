@@ -35,7 +35,7 @@ func StateBench(repeat int, test map[string]interface{}, name string, rules *com
 	}
 
 	for i := 0; i <= repeat; i++ {
-		t.Start(benchmark.PProfNoGC)
+		t.Start()
 		evm.Execute(tx, blockInfo, pre)
 	}
 

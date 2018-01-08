@@ -1,11 +1,12 @@
 package testvm
 
 import (
+	"path/filepath"
+	"testing"
+
 	"github.com/sudachen/playground/branch/sputnik/vm"
 	"github.com/sudachen/playground/playtool"
 	"github.com/sudachen/playground/playtool/classic"
-	"path/filepath"
-	"testing"
 
 	// disable some tests
 	_ "github.com/sudachen/playground/branch/sputnik/tests/_classic"

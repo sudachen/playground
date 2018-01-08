@@ -67,11 +67,11 @@ class Executor(object):
         try:
             gopath = os.getenv("GOPATH",None)
             if gopath is not None and self.workdir.startswith(gopath):
-                util.verbose("in the dir $(GOPATH){}",self.workdir[len(gopath):])
+                util.verbose("in the dir $(GOPATH){}", self.workdir[len(gopath):])
             else:
-                util.verbose("in the dir {}",self.workdir)
+                util.verbose("in the dir {}", self.workdir)
             util.verbose("\texecuting: {}"," ".join(args))
-            with subprocess.Popen(args,stdout=self.stdout,stderr=self.stderr,env=self.env,cwd=self.workdir) as p:
+            with subprocess.Popen(args,stdout=self.stdout, stderr=self.stderr, env=self.env, cwd=self.workdir) as p:
                 result = p.wait()
             if result == 0:
                 return Success
@@ -90,7 +90,7 @@ class GoExt(object):
         workdir = os.path.dirname(file)
         file = os.path.basename(file)
         ex = Executor(workdir,env,temp)
-        status = ex.run("go","run",file)
+        status = ex.run("go","run",file,"--pprof")
         ex.stdout.seek(0)
         ex.stderr.seek(0)
         return status, ex.stdout, ex.stderr

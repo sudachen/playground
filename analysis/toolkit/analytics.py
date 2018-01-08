@@ -73,8 +73,8 @@ class Percent(object):
 
     def __init__(self, label, base, value):
         def percent_of(b, v):
-            if b == 0: b = 1
-            if v == 0: v = 1
+            if b == 0 or v == 0:
+                raise ValueError
             return int(v/b*100)
         self.label = label
         self.passive = percent_of(base.total-base.active, value.total-value.active)
@@ -85,7 +85,10 @@ class Percent(object):
 
 
 def time_percent_of(task, base, target):
-    return Percent(task.label, base, target)
+    try:
+        return Percent(task.label, base, target)
+    except ValueError:
+        return None
 
 
 class Dif(object):
