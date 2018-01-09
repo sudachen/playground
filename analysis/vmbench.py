@@ -70,7 +70,7 @@ def plot_pprof(title, what, Q, base, target):
 
 
 def plot_pprof_png(branch,bench,count=15):
-    display(Image(tk.pprof_to(branch,bench,'png',count).value))
+    display(Image(tk.pprof_go_to(branch,bench,'png',count).value))
 
 
 def run_benchmark(*branches, temp=None):

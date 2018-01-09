@@ -2,7 +2,7 @@
 from .bench import run_benchmark
 from .util import make_temp_dir_with, analysis_dir
 from .analytics import extract, collect, time_dif_of, time_percent_of
-from .pprof import pprof_to, BENCHMARK_PPROF
+from .pprof import pprof_to, pprof_go_to, BENCHMARK_PPROF
 
 __all__ = [
     "run_benchmark",
@@ -13,6 +13,7 @@ __all__ = [
     "time_dif_of",
     "time_percent_of",
     "pprof_to",
+    "pprof_go_to",
     "BENCHMARK_PPROF",
 ]
 
