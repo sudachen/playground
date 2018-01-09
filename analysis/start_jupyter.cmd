@@ -1,1 +1,1 @@
-C:\Anaconda3\Scripts\jupyter-notebook.exe --notebook-dir=%~dp0 --port-retries=0 --port=9001
+start cmd /c C:\Anaconda3\Scripts\jupyter-notebook.exe --notebook-dir=%~dp0 --port-retries=0 --port=9001
