@@ -2,7 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
-from IPython.display import Markdown, display
+from IPython.display import Markdown, display, Image
 import toolkit as tk
 
 
@@ -67,6 +67,10 @@ def plot_pprof2(label1, p1, label2, p2):
 def plot_pprof(title, what, Q, base, target):
     display(Markdown("# "+title))
     plot_pprof2(base,Q[0][0].pprof[what],target,Q[0][1].pprof[what])
+
+
+def plot_pprof_png(branch,bench,count=15):
+    display(Image(tk.pprof_to(branch,bench,'png',count).value))
 
 
 def run_benchmark(*branches, temp=None):

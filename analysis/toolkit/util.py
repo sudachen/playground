@@ -29,3 +29,22 @@ def root_dir():
 def verbose(fmt,*args):
     print(fmt.format(*args))
 
+class SuccessObject(object):
+    pass
+
+Success = SuccessObject()
+
+class Return(object):
+    __slots__ = ["value"]
+
+    def __init__(self,value):
+        self.value = value
+
+class Fail(object):
+    __slots__ = ["reason"]
+
+    def __init__(self,reason):
+        self.reason = reason
+
+    def __repr__(self):
+        return "Fail(reason='{}')".format(self.reason)

@@ -17,6 +17,9 @@ class Benchmark(object):
         self.pfx = pfx
         self.env = env
 
+    def path_with(self,root):
+        return os.path.join(root,os.path.dirname(self.file))
+
 
 class GoBenchmark(Benchmark):
 
@@ -257,19 +260,19 @@ def load(label,file):
     r, ppf = load_results(file)
     return Result(label, r, {i.label:i for i in ppf} )
 
-def execute(root, the_branch, the_bench, temp=None):
+def execute(root, the_branch, the_bench, temp=None, pprof=None):
     branch_dir = the_branch.path_with(root)
     file = os.path.join(branch_dir, the_bench.file)
     ext = os.path.splitext(file)[1][1:]
     e = exec.lookup_for(ext)
-    status, stdout, stderr = e.execute_bench(file, the_bench.env, temp)
+    status, stdout, stderr = e.execute_bench(file, the_bench.env, temp, pprof)
     if status is not exec.Success:
         raise ExecutionBenchmarkError(the_bench.label, status.reason)
     return load(the_branch.label,stdout)
 
-def run_benchmark(bench_label, branches, root=util.root_dir(), temp=None):
+def run_benchmark(bench_label, branches, root=util.root_dir(), temp=None, pprof=None):
     "it does benchmark for specified branches or for ALL branches if specified ALL"
     the_bench = look_for(bench_label)
-    results = (execute(root, b, the_bench, temp) for b in branch.list_of(branches))
+    results = (execute(root, b, the_bench, temp, pprof) for b in branch.list_of(branches))
     return results
 

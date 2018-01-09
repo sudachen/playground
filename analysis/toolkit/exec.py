@@ -4,6 +4,7 @@ import os.path
 import tempfile
 import subprocess
 from . import util
+from .util import Success, Fail
 
 class Env(object):
     __slots__ = ["generic", "windows", "unix"]
@@ -36,20 +37,6 @@ class ExecutorError(Exception):
 class UnknownExtension(ExecutorError):
     def __init__(self,ext):
         super(ExecutorError, self).__init__(self,"have no executor for *.{}".format(ext))
-
-
-class SuccessObject(object):
-    pass
-
-
-Success = SuccessObject()
-
-
-class Fail(object):
-    __slots__ = ["reason"]
-
-    def __init__(self,reason):
-        self.reason = reason
 
 
 class Executor(object):
@@ -86,11 +73,17 @@ class Executor(object):
 class GoExt(object):
 
     @staticmethod
-    def execute_bench(file, env, temp=None):
+    def execute_bench(file, env, temp=None, pprof=None):
         workdir = os.path.dirname(file)
         file = os.path.basename(file)
         ex = Executor(workdir,env,temp)
-        status = ex.run("go","run",file,"--pprof")
+        if pprof is True:
+            ppfopt = ["--pprof"]
+        elif isinstance(pprof,str):
+            ppfopt = ["--pprof","--cpuprof="+pprof]
+        else:
+            ppfopt = ()
+        status = ex.run("go","run",file,*ppfopt)
         ex.stdout.seek(0)
         ex.stderr.seek(0)
         return status, ex.stdout, ex.stderr
