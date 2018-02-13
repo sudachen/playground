@@ -2,9 +2,10 @@
 package playtool
 
 import (
-	"github.com/sudachen/benchmark"
-	"github.com/sudachen/playground/libeth/common"
 	"strings"
+
+	common "github.com/sudachen/playground/libeth"
+	"github.com/sudachen/benchmark"
 )
 
 const DefaultRepeat = 29

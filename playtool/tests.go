@@ -5,7 +5,6 @@ package playtool
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sudachen/playground/libeth/common"
 	"io"
 	"io/ioutil"
 	"os"
@@ -13,6 +12,8 @@ import (
 	"testing"
 	"strings"
 	"path/filepath"
+
+	"github.com/sudachen/playground/libeth"
 	"github.com/sudachen/benchmark"
 )
 
@@ -22,7 +23,7 @@ type Nfo struct {
 	File   string
 	Skip   []string
 	SkipTo string
-	Rules  *common.RuleSet
+	Rules  *libeth.RuleSet
 }
 
 func (nfo *Nfo) runAll(rootDir string,f func(string,map[string]interface{})error) error {
@@ -36,7 +37,7 @@ func (nfo *Nfo) runAll(rootDir string,f func(string,map[string]interface{})error
 		return err
 	}
 	keys := SortedMapKeys(tests)
-	if nfo.SkipTo != common.NulStr {
+	if nfo.SkipTo != libeth.NulStr {
 		for len(keys) != 0 && keys[0] != nfo.SkipTo {
 			keys = keys[1:]
 		}

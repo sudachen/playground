@@ -1,0 +1,4 @@
+package libeth
+
+const NulStr = ""
+

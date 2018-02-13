@@ -2,21 +2,23 @@ package classic
 
 import (
 	"errors"
-	"github.com/sudachen/playground/libeth/common"
-	"github.com/sudachen/playground/libeth/crypto"
-	"github.com/sudachen/playground/libeth/state"
 	"math/big"
 	"path/filepath"
 	"testing"
 	"bytes"
 	"bufio"
 	"fmt"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/sudachen/playground/crypto"
+	"github.com/sudachen/playground/libeth"
+	"github.com/sudachen/playground/libeth/state"
 )
 
-func StateTest(test map[string]interface{}, name string, rules *common.RuleSet, evm common.VM, t *testing.T) error {
-	var pre common.State
-	var post common.State
-	var tx *common.Transaction
+func StateTest(test map[string]interface{}, name string, rules *libeth.RuleSet, evm libeth.VM, t *testing.T) error {
+	var pre libeth.State
+	var post libeth.State
+	var tx *libeth.Transaction
 	var secretKey []byte
 	var expectedOut []byte
 	var err error
@@ -39,7 +41,7 @@ func StateTest(test map[string]interface{}, name string, rules *common.RuleSet, 
 
 	tx.From = crypto.PubkeyToAddress(crypto.ToECDSA(secretKey).PublicKey)
 
-	blockInfo := &common.BlockInfo{
+	blockInfo := &libeth.BlockInfo{
 		Blockhash: func(n *big.Int) common.Hash {
 			return common.BytesToHash(crypto.Keccak256([]byte(n.String())))
 		},
@@ -105,32 +107,32 @@ var StateTests = []*Nfo{
 		Name:   "StateExample",
 		File:   "stExample.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "SystemOperations",
 		File:   "stSystemOperationsTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "PreCompiledContracts",
 		File:   "stPreCompiledContracts.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "RecursiveCreate",
 		File:   "stRecursiveCreate.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass: false,
@@ -138,24 +140,24 @@ var StateTests = []*Nfo{
 		File: "stSpecialTest.json",
 		//Skip:   []string{"JUMPDEST_AttackwithJump", "OverflowGasMakeMoney", "StackDepthLimitSEC", "txCost-sec73"},
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   true,
 		Name:   "Refund",
 		File:   "stRefundTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "BlockHash",
 		File:   "stBlockHashTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass: true,
@@ -163,102 +165,102 @@ var StateTests = []*Nfo{
 		File: "stInitCodeTest.json",
 		//Skip:   []string{"NotEnoughCashContractCreation", "OutOfGasContractCreation", "StackUnderFlowContractCreation", "TransactionCreateAutoSuicideContract", "TransactionCreateRandomInitCode", "TransactionCreateStopInInitcode"},
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "Logs",
 		File:   "stLogTests.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   true,
 		Name:   "Transaction",
 		File:   "stTransactionTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "Transition",
 		File:   "stTransitionTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "CallCreateCallCode",
 		File:   "stCallCreateCallCodeTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "CallCodes",
 		File:   "stCallCodes.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "DelegateCall",
 		File:   "stDelegatecallTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "Memory",
 		File:   "stMemoryTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   true,
 		Name:   "MemoryStress",
 		File:   "stMemoryStressTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   true,
 		Name:   "QuadraticComplexity",
 		File:   "stQuadraticComplexityTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   true,
 		Name:   "Solidity",
 		File:   "stSolidityTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   false,
 		Name:   "Wallet",
 		File:   "stWalletTest.json",
 		Skip:   []string{},
-		SkipTo: common.NulStr,
-		Rules:  &common.RuleSet{HomesteadBlock: big.NewInt(1000000)},
+		SkipTo: libeth.NulStr,
+		Rules:  &libeth.RuleSet{HomesteadBlock: big.NewInt(1000000)},
 	},
 	&Nfo{
 		Pass:   true,
 		Name:   "HomesteadSystemOperations",
 		File:   filepath.Join("Homestead", "stSystemOperationsTest.json"),
 		Skip:   []string{},
-		SkipTo: common.NulStr,
+		SkipTo: libeth.NulStr,
 	},
 }

@@ -1,4 +1,0 @@
-package common
-
-const NulStr = ""
-

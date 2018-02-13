@@ -7,15 +7,16 @@
 package playtool
 
 import (
-	"github.com/sudachen/playground/libeth/common"
 	"testing"
 	"strings"
 	"time"
+
+	"github.com/sudachen/playground/libeth"
 )
 
 type Tfo struct {
-	Proc    func(map[string]interface{},string,*common.RuleSet,common.VM,*testing.T)error
-	NewVM   func() common.VM
+	Proc    func(map[string]interface{},string,*libeth.RuleSet,libeth.VM,*testing.T)error
+	NewVM   func() libeth.VM
 	RootDir string
 }
 

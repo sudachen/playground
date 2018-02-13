@@ -1,19 +1,21 @@
 package classic
 
 import (
-	"github.com/sudachen/playground/libeth/common"
-	"github.com/sudachen/benchmark"
 	"math/big"
-	"github.com/sudachen/playground/libeth/crypto"
+
+	"github.com/sudachen/benchmark"
+	"github.com/sudachen/playground/crypto"
+	"github.com/sudachen/playground/libeth"
+	"github.com/ethereum/go-ethereum/common"
 )
 
-func StateBench(repeat int, test map[string]interface{}, name string, rules *common.RuleSet, evm common.VM, t *benchmark.T) error {
-	var pre common.State
-	var tx *common.Transaction
+func StateBench(repeat int, test map[string]interface{}, name string, rules *libeth.RuleSet, evm libeth.VM, t *benchmark.T) error {
+	var pre libeth.State
+	var tx *libeth.Transaction
 	var secretKey []byte
 	var err error
 
-	blockInfo := &common.BlockInfo{
+	blockInfo := &libeth.BlockInfo{
 		Blockhash: func(n *big.Int) common.Hash {
 			return common.BytesToHash(crypto.Keccak256([]byte(n.String())))
 		},

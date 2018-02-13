@@ -1,16 +1,18 @@
 package vm
 
 import (
-	etc "github.com/ethereumproject/go-ethereum/common"
-	"github.com/ethereumproject/sputnikvm-ffi/go/sputnikvm"
-	"github.com/sudachen/playground/libeth/common"
-	"github.com/sudachen/playground/libeth/state"
 	"math/big"
-	//etcc "github.com/ethereumproject/go-ethereum/core"
-	//etcvm "github.com/ethereumproject/go-ethereum/core/vm"
+
+	etc "github.com/ethereumproject/go-ethereum/common"
+	common "github.com/ethereum/go-ethereum/common"
+
+	"github.com/sudachen/playground/libeth/state"
+	"github.com/sudachen/playground/libeth"
+
+	"github.com/ethereumproject/sputnikvm-ffi/go/sputnikvm"
 )
 
-var defaultRuleset = &common.RuleSet{
+var defaultRuleset = &libeth.RuleSet{
 	HomesteadBlock:           big.NewInt(1150000),
 	HomesteadGasRepriceBlock: big.NewInt(2500000),
 	DiehardBlock:             big.NewInt(3000000),
@@ -47,14 +49,14 @@ func etcAddressOpt(a *common.Address) *etc.Address {
 
 type nvm struct{}
 
-func NewVM() common.VM {
+func NewVM() libeth.VM {
 	return &nvm{}
 }
 
-func (*nvm) Execute(tx *common.Transaction, bi *common.BlockInfo, st common.State) (
+func (*nvm) Execute(tx *libeth.Transaction, bi *libeth.BlockInfo, st libeth.State) (
 	/*out*/ []byte,
 	/*usedGas*/ *big.Int,
-	/*resultState*/ common.State,
+	/*resultState*/ libeth.State,
 	/*executionError*/ error) {
 
 	rs := state.NewMicroState(st)
@@ -141,12 +143,12 @@ Loop:
 		switch account.Typ() {
 		case sputnikvm.AccountChangeIncreaseBalance:
 			address := account.Address()
-			o := common.MutableAccount{rs, comAddress(address)}
+			o := libeth.MutableAccount{rs, comAddress(address)}
 			amount := account.ChangedAmount()
 			o.AddBalance(amount)
 		case sputnikvm.AccountChangeDecreaseBalance:
 			address := account.Address()
-			o := common.MutableAccount{rs, comAddress(address)}
+			o := libeth.MutableAccount{rs, comAddress(address)}
 			amount := account.ChangedAmount()
 			o.SubBalance(amount)
 		case sputnikvm.AccountChangeRemoved:
@@ -154,7 +156,7 @@ Loop:
 			rs.Suicide(comAddress(address))
 		case sputnikvm.AccountChangeFull, sputnikvm.AccountChangeCreate:
 			address := account.Address()
-			o := common.MutableAccount{rs, comAddress(address)}
+			o := libeth.MutableAccount{rs, comAddress(address)}
 			o.SetBalance(account.Balance())
 			o.SetNonce(account.Nonce().Uint64())
 			o.SetCode(account.Code())
@@ -172,7 +174,7 @@ Loop:
 		}
 	}
 	for _, log := range vm.Logs() {
-		topics := make([]common.Hash, len(log.Topics))
+		topics := make([]libeth.Hash, len(log.Topics))
 		for i := 0; i < len(log.Topics); i++ {
 			copy(topics[i][:], log.Topics[i][:])
 		}

@@ -2,15 +2,16 @@ package state
 
 import (
 	"fmt"
-	"github.com/sudachen/playground/libeth/common"
 	"io"
+	"github.com/sudachen/playground/libeth"
+	"github.com/ethereum/go-ethereum/common"
 )
 
-func WriteDump(wr io.Writer, st common.State, pfx string) {
+func WriteDump(wr io.Writer, st libeth.State, pfx string) {
 	addresses := st.Addresses(false)
 	fmt.Fprintf(wr, "%sSTATE HAS %d ACCOUNTS:\n", pfx, len(addresses))
 	for i, a := range addresses {
-		o := common.Account{st, a}
+		o := libeth.Account{st, a}
 		if i != 0 {
 			fmt.Fprintf(wr,"%s--------\n",pfx)
 		}
@@ -27,10 +28,10 @@ func WriteDump(wr io.Writer, st common.State, pfx string) {
 	}
 }
 
-func WriteDiff(wr io.Writer, st common.State, etalonSt common.State, addresses ...common.Address) {
+func WriteDiff(wr io.Writer, st libeth.State, etalonSt libeth.State, addresses ...common.Address) {
 	for _, a := range addresses {
-		o := common.Account{st, a}
-		e := common.Account{etalonSt, a}
+		o := libeth.Account{st, a}
+		e := libeth.Account{etalonSt, a}
 		if o.Exists() != e.Exists() {
 			if !o.HasSuicide() && !e.HasSuicide() {
 				var oExists= "exists"
@@ -55,7 +56,7 @@ func WriteDiff(wr io.Writer, st common.State, etalonSt common.State, addresses .
 	}
 }
 
-func Compare(sta common.State, stb common.State) []common.Address {
+func Compare(sta libeth.State, stb libeth.State) []common.Address {
 	staa := sta.Addresses(false)
 	ret := make([]common.Address, 0, len(staa))
 
@@ -67,8 +68,8 @@ func Compare(sta common.State, stb common.State) []common.Address {
 	for _, a := range stb.Addresses(false) {
 		if _, exists := other[a]; exists {
 			other[a] = false
-			oa := &common.Account{sta, a}
-			ob := &common.Account{stb, a}
+			oa := &libeth.Account{sta, a}
+			ob := &libeth.Account{stb, a}
 			if !oa.IsEqualTo(ob) {
 				ret = append(ret, a)
 			}
@@ -86,12 +87,12 @@ func Compare(sta common.State, stb common.State) []common.Address {
 	return ret
 }
 
-func CompareWithoutSuicides(sta common.State, stb common.State) []common.Address {
+func CompareWithoutSuicides(sta libeth.State, stb libeth.State) []common.Address {
 	diff := Compare(sta, stb)
-	ret := make([]common.Address, 0, len(diff))
+	ret := make([]libeth.Address, 0, len(diff))
 	for _, a := range diff {
-		oa := &common.Account{sta, a}
-		ob := &common.Account{stb, a}
+		oa := &libeth.Account{sta, a}
+		ob := &libeth.Account{stb, a}
 		if !oa.HasSuicide() && !ob.HasSuicide() {
 			ret = append(ret, a)
 		}

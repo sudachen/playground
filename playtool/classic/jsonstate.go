@@ -3,10 +3,12 @@ package classic
 import (
 	"errors"
 	"fmt"
-	"github.com/sudachen/playground/libeth/common"
-	"github.com/sudachen/playground/libeth/state"
 	"math/big"
 	"strconv"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/sudachen/playground/libeth"
+	"github.com/sudachen/playground/libeth/state"
 )
 
 /*
@@ -146,7 +148,7 @@ func strToBytesOpt(m map[string]interface{}, index string) ([]byte, error) {
 	}
 }
 
-func setStorage(m map[string]interface{}, address common.Address, st common.MutableState) error {
+func setStorage(m map[string]interface{}, address common.Address, st libeth.MutableState) error {
 	if v, ok := m["storage"]; !ok {
 		return errors.New("there is no storage field")
 	} else {
@@ -180,8 +182,8 @@ func getHashes(m map[string]interface{}, index string) ([]common.Hash, error) {
 	return nil, nil
 }
 
-func GetTransactionLogs(m map[string]interface{}) ([]*common.Log, error) {
-	ret := make([]*common.Log, 0, 3)
+func GetTransactionLogs(m map[string]interface{}) ([]*libeth.Log, error) {
+	ret := make([]*libeth.Log, 0, 3)
 	if v, ok := m["logs"]; ok {
 		if values, ok := v.([]interface{}); !ok {
 			return nil, errors.New("field storage has malformed value")
@@ -200,7 +202,7 @@ func GetTransactionLogs(m map[string]interface{}) ([]*common.Log, error) {
 					if data, err := getString(log, "data"); err != nil {
 						return nil, fmt.Errorf("bad log record: %s", err.Error())
 					} else {
-						ret = append(ret, &common.Log{
+						ret = append(ret, &libeth.Log{
 							Address: common.HexToAddress(address),
 							Topics:  topics,
 							Data:    common.FromHex(data)})
@@ -212,7 +214,7 @@ func GetTransactionLogs(m map[string]interface{}) ([]*common.Log, error) {
 	return ret, nil
 }
 
-func FillStateFrom(accounts map[string]interface{}, st common.MutableState) error {
+func FillStateFrom(accounts map[string]interface{}, st libeth.MutableState) error {
 	for a, acc := range accounts {
 		if m, ok := acc.(map[string]interface{}); !ok {
 			return fmt.Errorf("malformed accouns set")
@@ -257,7 +259,7 @@ func GetPossibleForks(test map[string]interface{}) []string {
 	return ret
 }
 
-func NewPreState(test map[string]interface{}) (common.State, error) {
+func NewPreState(test map[string]interface{}) (libeth.State, error) {
 	pre := state.NewMicroState(nil)
 	var err error
 
@@ -272,7 +274,7 @@ func NewPreState(test map[string]interface{}) (common.State, error) {
 	return pre.Freeze(), nil
 }
 
-func NewClassicPostState(test map[string]interface{}) (common.State, error) {
+func NewClassicPostState(test map[string]interface{}) (libeth.State, error) {
 	post := state.NewMicroState(nil)
 	var err error
 
@@ -287,12 +289,12 @@ func NewClassicPostState(test map[string]interface{}) (common.State, error) {
 	return post.Freeze(), nil
 }
 
-func GetTransaction(test map[string]interface{}) (*common.Transaction, error) {
+func GetTransaction(test map[string]interface{}) (*libeth.Transaction, error) {
 	var err error
 
 	if m, ok := test["transaction"]; ok {
 		if v, ok := m.(map[string]interface{}); ok {
-			tx := &common.Transaction{}
+			tx := &libeth.Transaction{}
 			if tx.Data, err = strToBytes(v, "data"); err != nil {
 				return nil, err
 			}
@@ -336,7 +338,7 @@ func GetTransactionOut(test map[string]interface{}) ([]byte, error) {
 	return strToBytes(test, "out")
 }
 
-func FillBlockInfo(test map[string]interface{}, blockInfo *common.BlockInfo) error {
+func FillBlockInfo(test map[string]interface{}, blockInfo *libeth.BlockInfo) error {
 	var err error
 	if m, ok := test["env"]; ok {
 		if env, ok := m.(map[string]interface{}); ok {

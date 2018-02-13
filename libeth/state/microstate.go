@@ -1,10 +1,12 @@
 package state
 
 import (
-	"github.com/sudachen/playground/libeth/common"
-	"github.com/sudachen/playground/libeth/crypto"
 	"math/big"
 	"sort"
+
+	"github.com/sudachen/playground/crypto"
+	"github.com/sudachen/playground/libeth"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type Change byte
@@ -64,7 +66,7 @@ type stAccount struct {
 	history []*stData
 }
 
-func (acc *stData) CopyFrom(origin common.State, address common.Address) {
+func (acc *stData) CopyFrom(origin libeth.State, address common.Address) {
 	acc.nonce = origin.GetNonce(address)
 	acc.hasSuicide = origin.HasSuicide(address)
 	acc.newborn = false
@@ -81,47 +83,8 @@ func (acc *stData) CopyFrom(origin common.State, address common.Address) {
 	}, false)
 }
 
-/*var equalityError = errors.New("unequal")
-
-func (acc *stData) IsEqualTo(st common.State, address common.Address) bool {
-	hash := common.Hash{}
-	if acc.code != nil {
-		hash = acc.code.hash
-	}
-	if acc.balance.Cmp(st.GetBalance(address)) != 0 ||
-		acc.nonce != st.GetNonce(address) ||
-		acc.hasSuicide != st.HasSuicide(address) ||
-		hash != st.GetCodeHash(address) {
-		return false
-	}
-	mask := make(map[common.Hash]*stValue)
-	for k, v := range acc.values {
-		mask[k] = v
-	}
-	if nil != st.ProcessValues(address, func(key, val common.Hash) error {
-		if v, exists := mask[key]; exists {
-			delete(mask, key)
-			if v.value != val {
-				return equalityError
-			}
-		} else {
-			return equalityError
-		}
-		return nil
-	}, false) {
-		return false
-	}
-
-	if len(mask) != 0 {
-		return false
-	}
-
-	return true
-}
-*/
-
 type stLogs struct {
-	records   []*common.Log
+	records   []*libeth.Log
 	snapshots map[uint64]int
 }
 
@@ -132,10 +95,10 @@ type MicroState struct {
 
 	logs stLogs
 
-	origin common.State
+	origin libeth.State
 }
 
-func NewMicroState(origin common.State) *MicroState {
+func NewMicroState(origin libeth.State) *MicroState {
 	return &MicroState{
 		state:    make(map[common.Address]*stAccount),
 		logs:     stLogs{nil, make(map[uint64]int)},
@@ -145,7 +108,7 @@ func NewMicroState(origin common.State) *MicroState {
 	}
 }
 
-func (st *MicroState) Origin() common.State {
+func (st *MicroState) Origin() libeth.State {
 	return st.origin
 }
 
@@ -281,20 +244,20 @@ func (st *MicroState) Addresses(changedOnly bool) []common.Address {
 		}
 	}
 
-	sort.Sort(common.SortableAdresses(ret))
+	sort.Sort(libeth.SortableAdresses(ret))
 	return ret
 }
 
-func copyLogs(logs []*common.Log) []*common.Log {
+func copyLogs(logs []*libeth.Log) []*libeth.Log {
 	if logs != nil {
-		ret := make([]*common.Log, len(logs))
+		ret := make([]*libeth.Log, len(logs))
 		copy(ret, logs)
 		return ret
 	}
 	return nil
 }
 
-func (st *MicroState) Immutable() common.State {
+func (st *MicroState) Immutable() libeth.State {
 	if !st.mutable {
 		return st
 	}
@@ -320,7 +283,7 @@ func (st *MicroState) Immutable() common.State {
 	return im
 }
 
-func (st *MicroState) Freeze() common.State {
+func (st *MicroState) Freeze() libeth.State {
 	st.mutable = false
 	st.snapshot = 0
 	for _, dt := range st.state {
@@ -402,7 +365,7 @@ func (st *MicroState) Snap(address common.Address, change Change) *stData {
 	return acc.data
 }
 
-func (st *MicroState) Suicide(address common.Address) bool {
+func (st *MicroState) Suicide(address libeth.Address) bool {
 	acc := st.Snap(address, Suicide)
 	if acc != nil {
 		acc.hasSuicide = true
@@ -426,7 +389,7 @@ func (st *MicroState) SetNonce(address common.Address, nonce uint64) {
 func (st *MicroState) SetCode(address common.Address, code []byte) error {
 	acc := st.Snap(address, Modified)
 	if acc.code != nil {
-		return common.CodeRewriteError
+		return libeth.CodeRewriteError
 	}
 	var hash common.Hash
 	if len(code) != 0 {
@@ -493,15 +456,15 @@ func (st *MicroState) AddLog(address common.Address, topics []common.Hash, data 
 	if data == nil {
 		data = make([]byte, 0)
 	}
-	st.logs.records = append(st.logs.records, &common.Log{
+	st.logs.records = append(st.logs.records, &libeth.Log{
 		Address: address,
 		Topics:  topics,
 		Data:    data,
 	})
 }
 
-func (st *MicroState) Logs() []*common.Log {
-	ret := make([]*common.Log, len(st.logs.records))
+func (st *MicroState) Logs() []*libeth.Log {
+	ret := make([]*libeth.Log, len(st.logs.records))
 	for i, log := range st.logs.records {
 		ret[i] = log.Clone()
 	}
