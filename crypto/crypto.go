@@ -32,9 +32,9 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/sudachen/crypto/ecies"
 	"github.com/sudachen/crypto/secp256k1"
+	"github.com/sudachen/crypto/sha3"
 	"github.com/ethereum/go-ethereum/rlp"
 	"golang.org/x/crypto/ripemd160"
-	"golang.org/x/crypto/sha3"
 )
 
 func Keccak256(data ...[]byte) []byte {

@@ -79,7 +79,7 @@ def plot_fast_slow_tests(base, target):
         format(target.branch.label.title(), base.branch.label.title())
     f1 = lambda b,t: (t.active/b.active*100, b.label, t.label) if b.active != 0 and t.active != 0 else None
     Q = sorted([\
-        f1(i.vars[0],i.vars[1])+(i.label,float(i.vars[0].active)/1000000000,float(i.vars[1].active)/1000000000) \
+        f1(i.vars[0], i.vars[1]) + (i.label, float(i.vars[0].active)/1000000000, float(i.vars[1].active)/1000000000)\
         for i in extract(base,target).values()])
     d = lambda x: (x[3],str(int(x[0]))+'%','{:.3f}s'.format(x[5]),'{:.3f}s'.format(x[4]))
     X = [d(x) for x in Q[:15]] + [('...','','','')] + [d(x) for x in Q[-15:]]
