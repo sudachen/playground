@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from toolkit import *
 
 def plot_bench_hist(base, target, transform):
-    L = list(collect(extract(base, target),transform))
+    L = list(collect(extract(target, base),transform))
     P = pd.Series(L)
 
     mean, median, std = P.mean(), P.median(), P.std()
@@ -27,7 +27,7 @@ def plot_bench_hist(base, target, transform):
     ax.xaxis.set_major_formatter(mtick.PercentFormatter())
     ax.set_ylabel('Tests count', fontsize=18)
     ax.set_xlabel(
-        'How many time takes {} VM against {} VM.  (median {:.0f}, μ {:.0f}, σ {:.0f})'.
+        'How faster {} VM against {} VM.  (median {:.0f}, μ {:.0f}, σ {:.0f})'.
             format(target.branch.label, base.branch.label, median, mean, std),
         fontsize=18)
     ax.set_title(
