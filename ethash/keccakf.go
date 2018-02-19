@@ -2,7 +2,7 @@ package ethash
 
 import (
 	"hash"
-	"github.com/ethereump/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/sudachen/playground/sha3"
 	"unsafe"
 )

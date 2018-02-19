@@ -74,16 +74,17 @@ def plot_pprof_image(title, what, target):
     display(Image(S))
 
 
-def plot_fast_slow_tests(base, target):
-    title = "How fast and slow is {} VM against {} VM by tests".\
+def plot_fast_slow_tests(base, target, transform):
+    title = "How fast and slow is {} VM against {} VM by tests". \
         format(target.branch.label.title(), base.branch.label.title())
-    f1 = lambda b,t: (t.active/b.active*100, b.label, t.label) if b.active != 0 and t.active != 0 else None
-    Q = sorted([\
-        f1(i.vars[0], i.vars[1]) + (i.label, float(i.vars[0].active)/1000000000, float(i.vars[1].active)/1000000000)\
-        for i in extract(base,target).values()])
-    d = lambda x: (x[3],str(int(x[0]))+'%','{:.3f}s'.format(x[5]),'{:.3f}s'.format(x[4]))
+    good = lambda i: i.vars[0].active != 0  and i.vars[1].active != 0
+    f1 = lambda b,t: (transform(b,t), b.label, t.label)
+    Q = sorted([f1(i.vars[0], i.vars[1]) + (i.label, float(i.vars[0].active)/1000000000, float(i.vars[1].active)/1000000000) \
+                for i in extract(base, target).values() if good(i) ] )
+    f2 = lambda x: str(int(-x)) + '% faster' if x < 0 else str(int(x)) + '% slower'
+    d = lambda x: (x[3],f2(x[0]),'{:.3f}s'.format(x[5]),'{:.3f}s'.format(x[4]))
     X = [d(x) for x in Q[:15]] + [('...','','','')] + [d(x) for x in Q[-15:]]
-    pFld = '{} %of {}'.format(target.branch.label.title(),base.branch.label.title())
+    pFld = '{} vs {}'.format(target.branch.label.title(),base.branch.label.title())
     fields = ['Name',pFld,target.branch.label.title(),base.branch.label.title()]
     F = pd.DataFrame(X,columns=fields).set_index(fields)
     display(Markdown("# "+title))
