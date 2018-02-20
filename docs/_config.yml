@@ -1,0 +1,15 @@
+
+theme: jekyll-theme-slate
+title: Ethereum Playground
+google_analytics: UA-99577378-1
+repository: sudachen/playground
+github:
+  repository_url: https://github.com/sudachen/Playground
+gems:
+  - jekyll-feed
+  - jekyll-theme-slate
+exclude:
+  - Gemfile
+  - Gemfile.lock
+
+
