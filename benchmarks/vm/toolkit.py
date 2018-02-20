@@ -1,12 +1,9 @@
 
-import sys
 import os.path
-
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),'benchmark','py'))
-
-from benchmark import *
+from gobench import *
 
 set_root_dir(os.path.dirname(__file__))
+
 
 class Branch(object):
 
@@ -24,8 +21,12 @@ class Branch(object):
     def execute(self, bench, *a, **k):
         return bench.execute(self, *a, **k)
 
+    def load_or_execute(self, bench, *a, **k):
+        return bench.load_or_execute(self, *a, **k)
+
 
 class Test(object):
+
     __slots__ = ('label', 'vars')
 
     def __init__(self, label, L):
@@ -37,6 +38,7 @@ class Test(object):
 
 
 class Var(object):
+
     __slots__ = ('label', 'total', 'active', 'count', 'error')
 
     def __init__(self, label, total, active, count, error):

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/sudachen/benchmark"
@@ -26,5 +25,5 @@ func main() {
 		//classic.RunOneStateBenchmark(bfo,"StateExample/*",t)
 		return nil
 	})
-	t.WriteJson(os.Stdout)
+	t.WriteJsonResult()
 }

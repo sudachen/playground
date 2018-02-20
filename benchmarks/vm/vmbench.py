@@ -1,15 +1,11 @@
 
-import sys
-import os.path
 import base64
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 from IPython.display import Markdown, display, Image
+from .toolkit import *
 
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-
-from toolkit import *
 
 def plot_bench_hist(base, target, transform):
     L = list(collect(extract(target, base),transform))
