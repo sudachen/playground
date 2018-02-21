@@ -2,7 +2,7 @@
 import os.path
 from gobench import *
 
-set_root_dir(os.path.dirname(__file__))
+set_root_dir(os.path.dirname(os.path.dirname(__file__)))
 
 
 class Branch(object):
@@ -13,10 +13,10 @@ class Branch(object):
         self.label = label
 
     def dirname(self, bench_label):
-        return os.path.join(os.path.dirname(__file__), bench_label, self.label)
+        return os.path.join(os.path.dirname(os.path.dirname(__file__)), bench_label, self.label)
 
     def temp(self, bench_label):
-        return os.path.join(os.path.dirname(__file__), bench_label, self.label)
+        return os.path.join(os.path.dirname(os.path.dirname(__file__)), bench_label, self.label)
 
     def execute(self, bench, *a, **k):
         return bench.execute(self, *a, **k)

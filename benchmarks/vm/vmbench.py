@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 from IPython.display import Markdown, display, Image
-from .toolkit import *
+from toolkit import *
 
 
 def plot_bench_hist(base, target, transform):
@@ -23,7 +23,7 @@ def plot_bench_hist(base, target, transform):
     ax.xaxis.set_major_formatter(mtick.PercentFormatter())
     ax.set_ylabel('Tests count', fontsize=18)
     ax.set_xlabel(
-        'How faster {} VM against {} VM.  (median {:.0f}, μ {:.0f}, σ {:.0f})'.
+        'How fast is {} VM against {} VM.  (median {:.0f}, μ {:.0f}, σ {:.0f})'.
             format(target.branch.label, base.branch.label, median, mean, std),
         fontsize=18)
     ax.set_title(
