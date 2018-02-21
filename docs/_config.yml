@@ -3,8 +3,12 @@ theme: jekyll-theme-slate
 title: Go-Ethereum Playground
 google_analytics: UA-99577378-1
 repository: sudachen/playground
+excerpt_separator: <!--more-->
 github:
   repository_url: https://github.com/sudachen/Playground
+relative_links:
+  enabled:     true
+  collections: false
 gems:
   - jekyll-feed
   - jekyll-theme-slate
