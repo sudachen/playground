@@ -1,4 +1,4 @@
-# Ethereum Playground
+# Go-Ethereum Playground
 
 
 [Blog Post: How fast is Sputnik VM](https://sudachen.github.io/playground/2018/02/18/How-fast-is-Sputnik-VM.html)
