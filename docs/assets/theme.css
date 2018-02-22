@@ -76,6 +76,10 @@ h1 {
   padding-top: 20px;
 }
 
+#post img, .post-excerpt img {
+  width: 100%;
+}
+
 #post h1, .post-excerpt h1, .post-excerpt h1 a {
   letter-spacing: 2px;
   padding-bottom: 0px;
