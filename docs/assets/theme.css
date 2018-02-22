@@ -77,7 +77,7 @@ h1 {
 }
 
 #post img, .post-excerpt img {
-  width: 100%;
+  max-width: 100%;
 }
 
 #post h1, .post-excerpt h1, .post-excerpt h1 a {
