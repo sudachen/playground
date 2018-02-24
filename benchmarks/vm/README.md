@@ -6,7 +6,7 @@ vmbench.bench_and_report('classic','sputnik')
 ```
 
 
-# Comparision of Sputnik/Classic VMs benchmarks over 300 test
+# Comparision of Sputnik/Classic VMs benchmarks
 
 
 

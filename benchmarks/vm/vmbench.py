@@ -32,7 +32,7 @@ def plot_bench_hist(base, target, transform):
                  format(len(L), total, drop),
                  fontsize=18)
 
-    title = 'Comparision of {}/{} VMs benchmarks over {} test'.\
+    title = 'Comparision of {}/{} VMs benchmarks'.\
             format(target.branch.label.title(), base.branch.label.title(), len(L))
 
     display(Markdown("# "+title))
