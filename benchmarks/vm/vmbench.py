@@ -1,8 +1,10 @@
 
 import base64
+import tempfile
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+import graphviz as gv
 from IPython.display import Markdown, display, Image
 from toolkit import *
 
@@ -26,11 +28,14 @@ def plot_bench_hist(base, target, transform):
         'How fast is {} VM against {} VM.  (median {:.0f}, μ {:.0f}, σ {:.0f})'.
             format(target.branch.label, base.branch.label, median, mean, std),
         fontsize=18)
-    ax.set_title(
-        'Comparision of {}/{} VMs benchmarks. ({} results, {} usable, {} dropped)'.
-            format(target.branch.label, base.branch.label, len(L), total, drop),
-        fontsize=18)
+    ax.set_title('{} results, {} usable, {} dropped'.\
+                 format(len(L), total, drop),
+                 fontsize=18)
 
+    title = 'Comparision of {}/{} VMs benchmarks over {} test'.\
+            format(target.branch.label.title(), base.branch.label.title(), len(L))
+
+    display(Markdown("# "+title))
     plt.show()
 
 
@@ -66,9 +71,9 @@ def plot_pprof(title, what, base, target):
 
 def plot_pprof_image(title, what, target):
     display(Markdown("# "+title))
-    S = base64.b64decode(target.pprof[what].image)
-    display(Image(S))
-
+    S = base64.b64decode(target.pprof[what].image).decode()
+    tfn = tempfile.mktemp(suffix='.png', prefix='pgraphviz-')
+    display(Image(gv.Source(S, format='png', engine='dot').render(tfn)))
 
 def plot_fast_slow_tests(base, target, transform):
     title = "How fast and slow is {} VM against {} VM by tests". \
@@ -85,3 +90,93 @@ def plot_fast_slow_tests(base, target, transform):
     F = pd.DataFrame(X,columns=fields).set_index(fields)
     display(Markdown("# "+title))
     display(F)
+
+def bench_and_report(base_name, target_name):
+    bench  = Benchmark("vm")
+    base   = Branch(base_name).load_or_execute(bench, pprof=BENCHMARK_PPROF, mprof=BENCHMARK_MPROF, callgraph=True)
+    target = Branch(target_name).load_or_execute(bench, pprof=BENCHMARK_PPROF, mprof=BENCHMARK_MPROF, callgraph=True)
+
+    def transform(b,t):
+        if b.active > 0 and t.active > 0:
+            r = (t.active/b.active)
+            return int(r*100-100) if r >= 1 else int(-1/r*100+100)
+
+    plot_bench_hist(base, target, transform)
+    plot_fast_slow_tests(base, target, transform)
+    plot_pprof('TOP calls', 'top', base, target)
+    plot_pprof_image('Top calls on {} VM'.format(base_name.title()), 'top', base)
+    plot_pprof_image('Top calls on {} VM'.format(target_name.title()), 'top', target)
+    plot_pprof('TOP allocs', 'alloc', base, target)
+    plot_pprof_image('Top allocs on {} VM'.format(base_name.title()), 'alloc', base)
+    plot_pprof_image('Top allocs on {} VM'.format(target_name.title()), 'alloc', target)
+
+
+TEXT = r'''{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import vmbench\n",
+    "vmbench.bench_and_report('classic','sputnik')"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
+'''
+
+
+def _remove_sytel_scoped(body):
+    while True:
+        i = body.find("<style scoped>")
+        if i >= 0:
+            j = body.find("</style>", i)
+            body = body[:i] + body[j+8:]
+        else:
+            return body
+
+
+if __name__ == '__main__':
+    import os, io, nbformat
+    from nbconvert.preprocessors import ExecutePreprocessor
+    from nbconvert import MarkdownExporter
+    from traitlets.config import Config
+    nb = nbformat.reads(TEXT,nbformat.NO_CONVERT)
+    ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
+    ep.preprocess(nb, {'metadata': {'path': '.'}})
+    c = Config()
+    c.ExtractOutputPreprocessor.output_filename_template = '_img/{unique_key}_{cell_index}_{index}{extension}'
+    me = MarkdownExporter(config=c)
+    (body, r) = me.from_notebook_node(nb)
+    README = open("README.md","w")
+    README.write(_remove_sytel_scoped(body))
+    if not os.path.isdir('_img'):
+        os.mkdir('_img')
+    for n, d in r.get('outputs',{}).items():
+        with open(n,"wb") as img:
+            img.write(d)
