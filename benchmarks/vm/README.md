@@ -33,92 +33,92 @@
   </thead>
   <tbody>
     <tr>
-      <th>Memory/mload16bitBound</th>
-      <th>2204% faster</th>
-      <th>0.001s</th>
-      <th>0.023s</th>
-    </tr>
-    <tr>
-      <th>CallCreateCallCode/createInitFail_OOGduringInit</th>
-      <th>200% faster</th>
+      <th>Memory/mem32kb_singleByte-1</th>
+      <th>199% faster</th>
       <th>0.001s</th>
       <th>0.003s</th>
     </tr>
     <tr>
-      <th>DelegateCall/callOutput3Fail</th>
-      <th>200% faster</th>
+      <th>Memory/mem64kb_singleByte+33</th>
+      <th>197% faster</th>
       <th>0.001s</th>
       <th>0.003s</th>
     </tr>
     <tr>
-      <th>Memory/mem32kb_singleByte-32</th>
-      <th>200% faster</th>
+      <th>Memory/mem64kb_singleByte+32</th>
+      <th>188% faster</th>
       <th>0.001s</th>
       <th>0.003s</th>
     </tr>
     <tr>
-      <th>Memory/mem64kb_singleByte</th>
-      <th>200% faster</th>
-      <th>0.001s</th>
-      <th>0.003s</th>
-    </tr>
-    <tr>
-      <th>CallCreateCallCode/createInitFailStackUnderflow</th>
+      <th>Memory/mem32kb_singleByte-31</th>
       <th>180% faster</th>
       <th>0.001s</th>
       <th>0.003s</th>
     </tr>
     <tr>
       <th>BlockHash/blockhashDOS-sec71</th>
-      <th>138% faster</th>
-      <th>1.419s</th>
-      <th>3.385s</th>
+      <th>133% faster</th>
+      <th>1.452s</th>
+      <th>3.397s</th>
     </tr>
     <tr>
-      <th>DelegateCall/callOutput3</th>
+      <th>SystemOperations/CallRecursiveBomb3</th>
+      <th>121% faster</th>
+      <th>0.103s</th>
+      <th>0.228s</th>
+    </tr>
+    <tr>
+      <th>Memory/mem32kb_singleByte-32</th>
       <th>108% faster</th>
       <th>0.001s</th>
       <th>0.002s</th>
     </tr>
     <tr>
-      <th>Special/gasPrice0</th>
+      <th>Memory/log4_dejavu</th>
       <th>107% faster</th>
       <th>0.001s</th>
       <th>0.002s</th>
     </tr>
     <tr>
-      <th>DelegateCall/callcodeOutput2</th>
+      <th>Memory/mload8bitBound</th>
+      <th>107% faster</th>
+      <th>0.001s</th>
+      <th>0.002s</th>
+    </tr>
+    <tr>
+      <th>DelegateCall/callcodeOutput3partial</th>
       <th>106% faster</th>
       <th>0.001s</th>
       <th>0.002s</th>
     </tr>
     <tr>
-      <th>DelegateCall/delegatecallValueCheck</th>
+      <th>Memory/mstroe8_dejavu</th>
       <th>106% faster</th>
       <th>0.001s</th>
       <th>0.002s</th>
     </tr>
     <tr>
-      <th>Memory/log1_dejavu</th>
-      <th>106% faster</th>
+      <th>DelegateCall/callOutput1</th>
+      <th>100% faster</th>
       <th>0.001s</th>
       <th>0.002s</th>
     </tr>
     <tr>
-      <th>Memory/log4_dejavu</th>
-      <th>106% faster</th>
+      <th>DelegateCall/callcodeOutput1</th>
+      <th>100% faster</th>
       <th>0.001s</th>
       <th>0.002s</th>
     </tr>
     <tr>
-      <th>Memory/mem31b_singleByte</th>
-      <th>106% faster</th>
+      <th>Memory/extcodecopy_dejavu</th>
+      <th>100% faster</th>
       <th>0.001s</th>
       <th>0.002s</th>
     </tr>
     <tr>
-      <th>SystemOperations/createNameRegistratorValueTooHigh</th>
-      <th>106% faster</th>
+      <th>Memory/log2_dejavu</th>
+      <th>100% faster</th>
       <th>0.001s</th>
       <th>0.002s</th>
     </tr>
@@ -129,52 +129,70 @@
       <th></th>
     </tr>
     <tr>
-      <th>BlockHash/blockhashInRange</th>
-      <th>100% slower</th>
-      <th>0.004s</th>
-      <th>0.002s</th>
-    </tr>
-    <tr>
-      <th>Transition/createNameRegistratorPerTxsAfter</th>
-      <th>100% slower</th>
+      <th>SystemOperations/suicideSendEtherToMe</th>
+      <th>105% slower</th>
       <th>0.002s</th>
       <th>0.001s</th>
     </tr>
     <tr>
+      <th>CallCreateCallCode/createJS_ExampleContract</th>
+      <th>162% slower</th>
+      <th>0.008s</th>
+      <th>0.003s</th>
+    </tr>
+    <tr>
       <th>Wallet/multiOwnedConstructionNotEnoughGas</th>
-      <th>174% slower</th>
-      <th>0.011s</th>
+      <th>196% slower</th>
+      <th>0.012s</th>
+      <th>0.004s</th>
+    </tr>
+    <tr>
+      <th>Wallet/dayLimitConstructionOOG</th>
+      <th>200% slower</th>
+      <th>0.012s</th>
       <th>0.004s</th>
     </tr>
     <tr>
       <th>SystemOperations/CallRecursiveBombLog2</th>
-      <th>237% slower</th>
-      <th>5.237s</th>
-      <th>1.550s</th>
+      <th>216% slower</th>
+      <th>4.862s</th>
+      <th>1.538s</th>
     </tr>
     <tr>
       <th>Wallet/dayLimitConstruction</th>
-      <th>254% slower</th>
-      <th>0.018s</th>
+      <th>217% slower</th>
+      <th>0.016s</th>
       <th>0.005s</th>
     </tr>
     <tr>
       <th>SystemOperations/CallRecursiveBombLog</th>
-      <th>273% slower</th>
-      <th>5.726s</th>
-      <th>1.535s</th>
+      <th>249% slower</th>
+      <th>5.282s</th>
+      <th>1.510s</th>
     </tr>
     <tr>
-      <th>Wallet/dayLimitConstructionOOG</th>
-      <th>290% slower</th>
-      <th>0.012s</th>
-      <th>0.003s</th>
+      <th>Wallet/multiOwnedConstructionNotEnoughGasPartial</th>
+      <th>268% slower</th>
+      <th>0.015s</th>
+      <th>0.004s</th>
+    </tr>
+    <tr>
+      <th>Wallet/multiOwnedConstructionCorrect</th>
+      <th>276% slower</th>
+      <th>0.015s</th>
+      <th>0.004s</th>
     </tr>
     <tr>
       <th>Wallet/dayLimitConstructionPartial</th>
-      <th>317% slower</th>
+      <th>319% slower</th>
       <th>0.017s</th>
       <th>0.004s</th>
+    </tr>
+    <tr>
+      <th>Wallet/walletConstructionPartial</th>
+      <th>328% slower</th>
+      <th>0.026s</th>
+      <th>0.006s</th>
     </tr>
     <tr>
       <th>Wallet/walletConstruction</th>
@@ -183,39 +201,21 @@
       <th>0.005s</th>
     </tr>
     <tr>
-      <th>Wallet/multiOwnedConstructionCorrect</th>
-      <th>399% slower</th>
-      <th>0.015s</th>
-      <th>0.003s</th>
-    </tr>
-    <tr>
-      <th>Wallet/multiOwnedConstructionNotEnoughGasPartial</th>
-      <th>399% slower</th>
-      <th>0.015s</th>
-      <th>0.003s</th>
-    </tr>
-    <tr>
-      <th>Wallet/walletConstructionPartial</th>
-      <th>420% slower</th>
-      <th>0.026s</th>
+      <th>Wallet/walletConstructionOOG</th>
+      <th>400% slower</th>
+      <th>0.025s</th>
       <th>0.005s</th>
     </tr>
     <tr>
-      <th>Wallet/walletConstructionOOG</th>
-      <th>514% slower</th>
-      <th>0.025s</th>
-      <th>0.004s</th>
-    </tr>
-    <tr>
       <th>RecursiveCreate/recursiveCreateReturnValue</th>
-      <th>2124% slower</th>
-      <th>33.408s</th>
-      <th>1.502s</th>
+      <th>2013% slower</th>
+      <th>31.302s</th>
+      <th>1.481s</th>
     </tr>
     <tr>
       <th>SystemOperations/Call10</th>
-      <th>2879% slower</th>
-      <th>0.596s</th>
+      <th>2883% slower</th>
+      <th>0.599s</th>
       <th>0.020s</th>
     </tr>
   </tbody>
