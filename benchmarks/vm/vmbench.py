@@ -166,7 +166,7 @@ def remove_python_code(body):
         i = body.find("```python")
         if i >= 0:
             j = body.find("```\n", i)
-            body = body[:i] + body[j+8:]
+            body = body[:i] + body[j+4:]
         else:
             return body
 
