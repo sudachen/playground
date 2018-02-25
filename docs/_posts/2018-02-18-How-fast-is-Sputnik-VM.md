@@ -7,9 +7,9 @@ In december 2017, ETCDEV Team has added Sputnik VM to go-etherm client for ETC b
 I tried to compare performance of SputnikVM (Rust) against original Classic VM (Go). 
 
 I benchmarked both of them over the subset of state tests from ethereumproject source tree and published following 
-[Benchmark Visualizaion in iPython Notebook](https://github.com/sudachen/playground/blob/master/benchmarks/vm/vmbench.ipynb)
+[Benchmark Visualizaion in iPython Notebook](https://github.com/sudachen/playground/blob/master/benchmarks/vm/README.md)
 
-![Sputnk VM vs Classic VM]({{site.baseurl}}/assets/posts/2018-02-18/sputnik_vs_classic.png)
+![Sputnk VM vs Classic VM](https://raw.githubusercontent.com/sudachen/playground/master/benchmarks/vm/_img/output_0_1.png)
 
 What does it mean?
 
