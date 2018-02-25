@@ -1,12 +1,6 @@
 
 
-```python
-import vmbench
-vmbench.bench_and_report('classic','sputnik')
-```
-
-
-# Comparision of Sputnik/Classic VMs benchmarks
+Comparision of Sputnik/Classic VMs benchmarks
 
 
 

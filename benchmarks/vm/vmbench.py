@@ -151,11 +151,21 @@ TEXT = r'''{
 '''
 
 
-def _remove_sytel_scoped(body):
+def remove_style_scoped(body):
     while True:
         i = body.find("<style scoped>")
         if i >= 0:
             j = body.find("</style>", i)
+            body = body[:i] + body[j+8:]
+        else:
+            return body
+
+
+def remove_python_code(body):
+    while True:
+        i = body.find("```python")
+        if i >= 0:
+            j = body.find("```\n", i)
             body = body[:i] + body[j+8:]
         else:
             return body
@@ -174,7 +184,7 @@ if __name__ == '__main__':
     me = MarkdownExporter(config=c)
     (body, r) = me.from_notebook_node(nb)
     README = open("README.md","w")
-    README.write(_remove_sytel_scoped(body))
+    README.write(remove_python_code(remove_style_scoped(body)))
     if not os.path.isdir('_img'):
         os.mkdir('_img')
     for n, d in r.get('outputs',{}).items():
