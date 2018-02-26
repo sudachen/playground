@@ -67,7 +67,7 @@
 .highlight { background: inherit; }
 .highlight table { border: 0px; margin: 0px; padding: 0px;}
 .highlight td { padding: 5px; border: 0px;}
-.highlight .code { padding-left: 0px; }
+.highlight .code, .highlight .rouge-code  { padding-left: 0px; }
 .highlight pre { margin: 0; padding: 0px; border: 0px; background: inherit; box-shadow: none; }
 .highlight .lineno {
   visibility: hidden;
@@ -77,21 +77,38 @@
   -o-user-select: none;
 } 
 
+.highlight .code, .highlight .rogue-code { padding-left: 10px; }
+
+.language-c .code { padding-left: 10px; }
+.language-c .gl { border-right: 1px solid #aaa; }
+.language-c .lineno { visibility: visible; width: 3ch; }
+
+/*
 .language-c .highlight .code { padding-left: 10px; }
 .language-c .highlight .gl { border-right: 1px solid #aaa; }
 .language-c .highlight .lineno { visibility: visible; width: 3ch; }
+*/
 
-.language-go .highlight .code { padding-left: 10px; }
-.language-go .highlight .gl { border-right: 1px solid #aaa; padding-left: 0px; }
-.language-go .highlight .lineno { visibility: visible; width: 3ch; }
+.language-go .gl, .language-golang .gl { border-right: 1px solid #aaa; padding-left: 0px; }
+.language-go .lineno { visibility: visible; width: 3ch; }
+.language-golang .lineno { visibility: hidden; width: 0px; overflow-x: hidden; }
 
+/*
 .language-golang .highlight .code { padding-left: 10px; }
 .language-golang .highlight .gl { border-right: 1px solid #aaa; padding-left: 0px; }
 .language-golang .highlight .lineno { visibility: hidden; width: 0px; overflow-x: hidden; }
+*/
 
+.language-text .highlight { background: #f0f0f0; font-weight: bold }
+.language-text .code { border-right: none; padding-left: 0px; }
+.language-text .gl { border-right: none; padding-left: 10px; }
+.language-text .lineno { visibility: hidden; width: 0px; overflow-x: hidden; }
+
+/*
 .language-text .highlight { background: #f0f0f0; font-weight: bold }
 .language-text .highlight .gl { border-right: none; padding-left: 10px; }
 .language-text .highlight .lineno { visibility: hidden; width: 0px; overflow-x: hidden; }
+*/
 
 .highlight .k  { color: #000000; font-weight: bold } /* Keyword */
 .highlight .kc { color: #000000; font-weight: bold } /* Keyword.Constant */
