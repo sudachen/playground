@@ -65,7 +65,7 @@
 .highlight .err{ color: #800; background: inherit; } 
 
 .highlight { background: inherit; }
-.highlight table { border: 0px; }
+.highlight table { border: 0px; margin: 0px; padding: 0px;}
 .highlight td { padding: 5px; border: 0px;}
 .highlight .code { padding-left: 0px; }
 .highlight pre { margin: 0; padding: 0px; border: 0px; background: inherit; box-shadow: none; }
@@ -82,16 +82,16 @@
 .language-c .highlight .lineno { visibility: visible; width: 3ch; }
 
 .language-go .highlight .code { padding-left: 10px; }
-.language-go .highlight .gl { border-right: 1px solid #aaa; }
+.language-go .highlight .gl { border-right: 1px solid #aaa; padding-left: 0px; }
 .language-go .highlight .lineno { visibility: visible; width: 3ch; }
 
 .language-golang .highlight .code { padding-left: 10px; }
-.language-golang .highlight .gl { border-right: 1px solid #aaa; }
-.language-golang .highlight .lineno { visibility: hidden; width: 0px; }
+.language-golang .highlight .gl { border-right: 1px solid #aaa; padding-left: 0px; }
+.language-golang .highlight .lineno { visibility: hidden; width: 0px; overflow-x: hidden; }
 
 .language-text .highlight { background: #f0f0f0; font-weight: bold }
-.language-text .highlight .gl { border-right: none; }
-.language-text .highlight .lineno { visibility: hide; width: 0px; }
+.language-text .highlight .gl { border-right: none; padding-left: 10px; }
+.language-text .highlight .lineno { visibility: hidden; width: 0px; overflow-x: hidden; }
 
 .highlight .k  { color: #000000; font-weight: bold } /* Keyword */
 .highlight .kc { color: #000000; font-weight: bold } /* Keyword.Constant */
@@ -105,4 +105,4 @@
 .highlight .sc { color: #0044DD } /* Literal.String.Char */
 .highlight .se { color: #cc0000; ; font-style: italic; font-weight: bold; background-color: #fff0f0 } /* Literal.String.Escape */
 
-.highlight { overflow-x:auto }
+.highlight { overflow-x:auto; font-size: 14px; margin-top: 10px; margin-bottom: 10px;}
