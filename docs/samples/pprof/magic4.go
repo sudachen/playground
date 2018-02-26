@@ -13,8 +13,8 @@ func main() {
 	var bf bytes.Buffer
 
 	pprof.StartCPUProfile(&bf)
-	for s:= ""; len(s) < 100000;  {
-		s = s + fmt.Sprintf("%d",len(s))
+	for s := ""; len(s) < 100000; {
+		s = s + fmt.Sprintf("%d", len(s))
 	}
 	pprof.StopCPUProfile()
 
@@ -25,9 +25,8 @@ func main() {
 		os.Exit(2)
 	}
 
-	fmt.Printf("%10s %11s %s\n","flat","%flat","function")
+	fmt.Printf("%10s %11s %s\n", "flat", "%flat", "function")
 	for _, row := range rpt.Rows {
-		fmt.Printf("%10.3f %10.3f%% %s\n",row.Flat,row.FlatPercent,row.Function)
+		fmt.Printf("%10.3f %10.3f%% %s\n", row.Flat, row.FlatPercent, row.Function)
 	}
 }
-

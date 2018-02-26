@@ -19,7 +19,7 @@ Is optimized Rust code not so fast and runs with speed equal to Go?! Maybe Go pa
 
 Let's look at the Sputnik VM top calls gathered through Go pprof. 
 
-![Sputnik VM Top Calls]({{site.baseurl}}/assets/posts/2018-02-18/sputnik_top_calls.png)
+![Sputnik VM Top Calls](https://raw.githubusercontent.com/sudachen/playground/master/benchmarks/vm/_img/output_0_11.png)
 
 Looks like almost all the time is spent in the Rust code and in the CGO wrappers (Go foreign function interface). 
 How much time exactly tooks CGO wrappers is not so important because for go-ethereum client both Rust and CGO is the same.

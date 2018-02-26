@@ -10,6 +10,14 @@ github:
 relative_links:
   enabled:     true
   collections: false
+kramdown:
+  syntax_highlighter_opts:
+    #line_numbers: true # bad idea, spans don't need linenos and would inherit this option
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
 gems:
   - jekyll-feed
   - jekyll-theme-slate

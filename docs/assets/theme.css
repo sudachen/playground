@@ -443,28 +443,6 @@ img.padding_0_0 {
   background: #fffffb;
 }
 
-.highlight { background: inherit; }
-.highlight table { border: 0px; }
-.highlight td { padding: 5px; border: 0px;}
-.highlight .code { 
-  padding-left: 10px; 
-}
-.highlight .gl { border-right: 1px solid #888;}
-.highlight pre { margin: 0; padding: 0px; border: 0px; background: inherit; box-shadow: none; }
-.highlight .lineno {
-  color: #888;
-  -webkit-user-select: none;
-  -moz-user-select: none; 
-  -o-user-select: none;
-} 
-.highlight .cm { color: #888; font-style: italic } /* Comment.Multiline */
-.highlight .c1 { color: #888; font-style: italic } /* Comment.Single */
-.highlight .c  { color: #888; font-style: italic } /* Comment */
-.highlight .cp { color: #093; font-weight: bold } /* Comment.Preproc */
-.highlight .nf { color: #000; font-style: italic } /* Name.Function */
-.highlight .n  { color: #000; } /* Name.Namespace */
-.highlight .err{ color: #800; background: inherit; } 
-
 *******************************************************************************/
 
 
