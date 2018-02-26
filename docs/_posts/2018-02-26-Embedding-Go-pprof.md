@@ -4,7 +4,7 @@ title: Embedding Go Pprof
 ---
 
 As you know Golang has time-based profiling subsytem and visualization tool called pprof. 
-The pprof is not friendly to using in a maneer different than command line tool. 
+The pprof is not friendly for use in a manner different than command line tool.
 However there is a way to embed it in an application to generate some reports in tests/benchmarks cases.
 I use it in my benchmark module to generate benchmarking report contaning top calls and callgrapth of the significant functions.
 
