@@ -21,7 +21,7 @@ func main() {
 ```
 
 It's the main module of pprof tool. The package pprof/driver is a frontend to the pprof internals which
-adopts the оptions and calls to the internal/driver package.
+adopts the оptions and calls to the pprof/internal/driver package.
 
 [github.com/google/pprof/driver/driver.go:31](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L31)
 ```golang
@@ -88,7 +88,7 @@ The **Options.Fetch** presents object wich fetches pprof/profile.Profile. Only t
 [github.com/google/pprof/driver/driver.go:108](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L108)
 ```golang
 type Fetcher interface {
-    Fetch(src string, duration, timeout time.Duration) (*profile.Profile, string, error)
+    Fetch(src string, duration, timeout time.Duration)(*profile.Profile, string, error)
 }
 ```
 
@@ -112,8 +112,7 @@ type fetcher struct {
     b []byte
 }
 
-func (f *fetcher) Fetch(src string, duration, timeout time.Duration) (*profile.Profile, string, error) {
-    if src == "" {
+func (f *fetcher) Fetch(src string, duration, timeout time.Duration)(*profile.Profile, string, error) {
     	p, err := profile.ParseData(f.b)
     	return p, "", err
     }
@@ -134,7 +133,7 @@ type FlagSet struct {
     args []string
 }
 
-func (f *FlagSet) StringList(name string, def string, usage string) *[]*string {
+func (f *FlagSet) StringList(name string, def string, usage string)*[]*string {
     return &[]*string{f.FlagSet.String(name, def, usage)}
 }
 
@@ -149,7 +148,9 @@ func (f *FlagSet) Parse(usage func()) []string {
 }
 
 func Flagset(a ...string) driver.FlagSet {
-    return &FlagSet{flag.NewFlagSet("ppf", flag.ContinueOnError), append(a,"")}
+    return &FlagSet{
+                flag.NewFlagSet("ppf", flag.ContinueOnError),
+                append(a,"")}
 }
 ```
 
@@ -222,7 +223,8 @@ func main() {
 
     driver.PProf(&driver.Options{
     	Fetch:   ppftool.Fetcher(bf.Bytes()),
-    	Flagset: ppftool.Flagset("-top", "-nodecount=5", "-unit=s", "-output=pprof.output.txt"),
+        Flagset: ppftool.Flagset("-top", "-nodecount=5", "-unit=s",
+                                 "-output=pprof.output.txt"),
     	UI:      ppftool.FakeUi(), // supress errors and unwanted messages
     })
 }
@@ -311,7 +313,8 @@ func main() {
 
     driver.PProf(&driver.Options{
     	Fetch:   ppftool.Fetcher(bf.Bytes()),
-    	Flagset: ppftool.Flagset("-top", "-nodecount=5", "-unit="+unit.String(), "-output="+tempfile),
+        Flagset: ppftool.Flagset("-top", "-nodecount=5", "-unit="+unit.String(),
+                                 "-output="+tempfile),
     	UI:      ppftool.FakeUi(),
     })
 
@@ -322,7 +325,8 @@ func main() {
 
     fmt.Printf("%10s %11s %s\n", "flat", "%flat", "function")
     for _, row := range rpt.Rows {
-    	fmt.Printf("%10.3f %10.3f%% %s\n", row.Flat, row.FlatPercent, row.Function)
+        fmt.Printf("%10.3f %10.3f%% %s\n",
+                   row.Flat, row.FlatPercent, row.Function)
     }
 }
 ``` 
@@ -405,7 +409,9 @@ func main() {
     }
     pprof.StopCPUProfile()
 
-    rpt, err := ppftool.Top(bf.Bytes(), &ppftool.Options{Count: 5, Hide: []string{"runtime\\."}})
+    rpt, err := ppftool.Top(
+                    bf.Bytes(),
+                    &ppftool.Options{Count: 5, Hide: []string{"runtime\\."}})
 
     if err != nil {
     	fmt.Println(err)
@@ -414,17 +420,18 @@ func main() {
 
     fmt.Printf("%10s %11s %s\n","flat","%flat","function")
     for _, row := range rpt.Rows {
-    	fmt.Printf("%10.3f %10.3f%% %s\n",row.Flat,row.FlatPercent,row.Function)
+        fmt.Printf("%10.3f %10.3f%% %s\n",
+                   row.Flat,row.FlatPercent,row.Function)
     }
 }
 ```
 
 ```text
 >go run magic4.go           
-      flat       %flat function                                                                    
-     0.180     28.570% main.main                                                                   
-     0.010      1.590% sync.(*Pool).pinSlow                                                        
-     0.010      1.590% sync.poolCleanup                                                            
-     0.000      0.000% fmt.Sprintf                                                                 
-     0.000      0.000% fmt.newPrinter                                                                                                                                                                 
+      flat       %flat function
+     0.180     28.570% main.main
+     0.010      1.590% sync.(*Pool).pinSlow
+     0.010      1.590% sync.poolCleanup
+     0.000      0.000% fmt.Sprintf
+     0.000      0.000% fmt.newPrinter
 ```

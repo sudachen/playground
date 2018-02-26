@@ -87,7 +87,7 @@
 
 .language-golang .highlight .code { padding-left: 10px; }
 .language-golang .highlight .gl { border-right: 1px solid #aaa; }
-.language-golang .highlight .lineno { visibility: hidden; width: 3ch; }
+.language-golang .highlight .lineno { visibility: hidden; width: 0px; }
 
 .language-text .highlight { background: #f0f0f0; font-weight: bold }
 .language-text .highlight .gl { border-right: none; }
@@ -104,3 +104,5 @@
 .highlight .s { color: #cc0000; font-style: italic } /* Literal.String */
 .highlight .sc { color: #0044DD } /* Literal.String.Char */
 .highlight .se { color: #cc0000; ; font-style: italic; font-weight: bold; background-color: #fff0f0 } /* Literal.String.Escape */
+
+.highlight { overflow-x:auto }
