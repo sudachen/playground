@@ -34,7 +34,7 @@ So, there are two resonable questions: what exactly is the pprof/driver.Option a
 Since all functionality is in the internal package, the only way to use this funtionality,
 without modification the original code, to use the both pprof/driver.Option and pprof/driver.Pprof.
 
-The pprof/driver.Options is a set of object which can control of the pprof actions
+The pprof/driver.Options is a set of object which can control the pprof actions
 
 [pprof/driver/driver.go:55](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L55)
 ```golang
@@ -48,7 +48,7 @@ type Options struct {
 }
 ```
 
-The fields **Options.Sym** and **Options.Obj** is used to customize symbolyzation. It's not nesessary to use these fields in most cases.
+The fields **Options.Sym** and **Options.Obj** are used to customize symbolyzation. It's not nesessary to use these fields in most cases.
 
 The **Options.UI** presents an object manages user interactions
 
