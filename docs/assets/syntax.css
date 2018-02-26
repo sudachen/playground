@@ -67,7 +67,6 @@
 .highlight { background: inherit; }
 .highlight table { border: 0px; margin: 0px; padding: 0px;}
 .highlight td { padding: 5px; border: 0px;}
-.highlight .code, .highlight .rouge-code  { padding-left: 0px; }
 .highlight pre { margin: 0; padding: 0px; border: 0px; background: inherit; box-shadow: none; }
 .highlight .lineno {
   visibility: hidden;
@@ -77,7 +76,7 @@
   -o-user-select: none;
 } 
 
-.highlight .code, .highlight .rogue-code { padding-left: 10px; }
+.highlight .code, .highlight .rouge-code { padding-left: 10px; }
 
 .language-c .code { padding-left: 10px; }
 .language-c .gl { border-right: 1px solid #aaa; }
@@ -100,8 +99,7 @@
 */
 
 .language-text .highlight { background: #f0f0f0; font-weight: bold }
-.language-text .code { border-right: none; padding-left: 0px; }
-.language-text .gl { border-right: none; padding-left: 10px; }
+.language-text .gl { border-right: none; padding-left: 0px; }
 .language-text .lineno { visibility: hidden; width: 0px; overflow-x: hidden; }
 
 /*
