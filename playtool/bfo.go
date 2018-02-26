@@ -4,15 +4,15 @@ package playtool
 import (
 	"strings"
 
-	common "github.com/sudachen/playground/libeth"
+	"github.com/sudachen/playground/libeth"
 	"github.com/sudachen/benchmark"
 )
 
 const DefaultRepeat = 29
 
 type Bfo struct {
-	Proc    func(int,map[string]interface{},string,*common.RuleSet,common.VM,*benchmark.T)error
-	NewVM   func() common.VM
+	Proc    func(int,map[string]interface{},string,*libeth.RuleSet,libeth.VM,*benchmark.T)error
+	NewVM   func() libeth.VM
 	RootDir string
 	Repeat  int
 }
