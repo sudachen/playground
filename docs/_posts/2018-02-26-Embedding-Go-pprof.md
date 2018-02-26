@@ -294,7 +294,7 @@ func (r *Report) Write(b []byte) {
 }
 ```
 
-Ok, compile all together
+Ok, compile all together now
 
 [playground/docs/samples/pprof/magic3.go:14](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic3.go#L14)
 ```golang
@@ -309,7 +309,7 @@ func main() {
 
     tempfile := "pprof.output.txt"
     unit := util.DefaultUnit
-    rpt := &util.Report{Label: "top", Unit: unit}
+    rpt := &util.Report{Unit: unit}
 
     driver.PProf(&driver.Options{
     	Fetch:   ppftool.Fetcher(bf.Bytes()),
