@@ -26,7 +26,7 @@ How much time exactly tooks CGO wrappers is not so important because for go-ethe
 
 By the way, where Sputnik VM is faster and dramtically slower then the Go VM implementation?!
 
-![Sputnik VM vs Classi VM by tests]({{site.baseurl}}/assets/posts/2018-02-18/sputnik_fast_slow.png)
+![Sputnik VM vs Classi VM by tests]({{site.baseurl}}/assets/2018-02-18-sputnik_fast_slow.png)
 
 I theory, if run Sputnik VM on the big regular contracts from the real Blockchain it will take some benifits. 
 I will test it latter with VMs from other clients to find how useful can be Sputnik VM. 
