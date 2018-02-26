@@ -10,7 +10,7 @@ I use it in my benchmark module to generate benchmarking report contaning top ca
 
 <!--more-->
 
-[github.com/google/pprof/pprof.go:26](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/pprof.go#L26)
+[pprof/pprof.go:26](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/pprof.go#L26)
 ```golang
 func main() {
     if err := driver.PProf(&driver.Options{}); err != nil {
@@ -23,7 +23,7 @@ func main() {
 It's the main module of pprof tool. The package pprof/driver is a frontend to the pprof internals which
 adopts the оptions and calls to the pprof/internal/driver package.
 
-[github.com/google/pprof/driver/driver.go:31](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L31)
+[pprof/driver/driver.go:31](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L31)
 ```golang
 func PProf(o *Options) error {
     return internaldriver.PProf(o.internalOptions())
@@ -36,7 +36,7 @@ without modification the original code, to use the both pprof/driver.Option and 
 
 The pprof/driver.Options is a set of object which can control of the pprof actions
 
-[github.com/google/pprof/driver/driver.go:55](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L55)
+[pprof/driver/driver.go:55](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L55)
 ```golang
 type Options struct {
     Writer  Writer      
@@ -52,7 +52,7 @@ The fields **Options.Sym** and **Options.Obj** is used to customize symbolyzatio
 
 The **Options.UI** presents an object manages user interactions
 
-[github.com/google/pprof/driver/driver.go:189](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L189)
+[pprof/driver/driver.go:189](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L189)
 ```golang
 type UI interface {
     ReadLine(prompt string) (string, error)
@@ -66,7 +66,7 @@ type UI interface {
 The **Options.Flagset** presents an object with logic similar to the standard flag.FlagSet.
 Pprof can operates with commandline arguments and options va this object.
 
-[github.com/google/pprof/driver/driver.go:72](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L72)
+[pprof/driver/driver.go:72](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L72)
 ```golang
 type FlagSet interface {
     Bool(name string, def bool, usage string) *bool
@@ -85,7 +85,7 @@ type FlagSet interface {
 
 The **Options.Fetch** presents object wich fetches pprof/profile.Profile. Only this object can really know from where is the perf-profile.
 
-[github.com/google/pprof/driver/driver.go:108](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L108)
+[pprof/driver/driver.go:108](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L108)
 ```golang
 type Fetcher interface {
     Fetch(src string, duration, timeout time.Duration)(*profile.Profile, string, error)
@@ -94,7 +94,7 @@ type Fetcher interface {
 
 The **Options.Writer** - as I see the idea of this filed is setup an object handling file operations directd by --output flag. (spoiler: it does not work yet)
 
-[github.com/google/pprof/driver/driver.go:66](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L66)
+[pprof/driver/driver.go:66](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L66)
 ```golang
 type Writer interface {
     Open(name string) (io.WriteCloser, error)
@@ -106,7 +106,7 @@ One which implemets pprof/driver.Fetcher and other - pprof/driver.FlagSet
 
 Local profile fetcher 
 
-[github.com/sudachen/benchmark/ppftool/fetcher.go:11](https://github.com/sudachen/benchmark/blob/master/ppftool/fetcher.go#L11)
+[benchmark/ppftool/fetcher.go:11](https://github.com/sudachen/benchmark/blob/master/ppftool/fetcher.go#L11)
 ```golang
 type fetcher struct {
     b []byte
@@ -126,7 +126,7 @@ func Fetcher(b []byte) driver.Fetcher {
 
 and custom flagset
 
-[github.com/sudachen/benchmark/ppftool/flagset.go:8](https://github.com/sudachen/benchmark/blob/master/ppftool/flagset.go#L8)
+[benchmark/ppftool/flagset.go:8](https://github.com/sudachen/benchmark/blob/master/ppftool/flagset.go#L8)
 ```golang
 type FlagSet struct {
     *flag.FlagSet
@@ -156,7 +156,7 @@ func Flagset(a ...string) driver.FlagSet {
 
 Now ... The MAGIC!
 
-[github.com/sudachen/playground/docs/samples/pprof/magic1.go:12](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic1.go#L12)
+[playground/docs/samples/pprof/magic1.go:12](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic1.go#L12)
 ```golang
 func main() {
 	var bf bytes.Buffer
@@ -216,7 +216,7 @@ func generateReport(p *profile.Profile, cmd []string, vars variables, o *plugin.
 
 So I will use external file, util it's not fixed. It's dirty but it works.
 
-[github.com/sudachen/playground/docs/samples/pprof/magic2.go:12](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic2.go#L12)
+[playground/docs/samples/pprof/magic2.go:12](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic2.go#L12)
 ```golang
 func main() {
     ... the same code here
@@ -236,7 +236,7 @@ To be useful this output need to be parsed and represented in some regular struc
 
 I can represent profiling output as a sort of structured report. I think, it's quite useful.
 
-[github.com/sudachen/benchmark/ppftool/report.go:9](https://github.com/sudachen/benchmark/blob/master/ppftool/report.go#L9)
+[benchmark/ppftool/report.go:9](https://github.com/sudachen/benchmark/blob/master/ppftool/report.go#L9)
 ```golang
 type Report struct {
     Unit
@@ -264,7 +264,7 @@ const (
 
 And, of couse, I need to convert text output of the pprof into structured records.
 
-[github.com/sudachen/benchmark/ppftool/report.go:87](https://github.com/sudachen/benchmark/blob/master/ppftool/report.go#L63)
+[benchmark/ppftool/report.go:87](https://github.com/sudachen/benchmark/blob/master/ppftool/report.go#L63)
 ```golang
 func (r *Report) Write(b []byte) {
     ...
@@ -296,7 +296,7 @@ func (r *Report) Write(b []byte) {
 
 Ok, compile all together
 
-[github.com/sudachen/playground/docs/samples/pprof/magic3.go:14](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic3.go#L14)
+[playground/docs/samples/pprof/magic3.go:14](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic3.go#L14)
 ```golang
 func main() {
     var bf bytes.Buffer
@@ -335,7 +335,7 @@ Bingo! But still is not friendly. The good idea is to make a function implementi
 
 Pprof constraints ... yes, pprof can limit samples by filters like -show, -hide, -focus. So I need a struct represented filtering options.
 
-[github.com/sudachen/benchmark/ppftool/options.go:10](https://github.com/sudachen/benchmark/blob/master/ppftool/options.go#L10)
+[benchmark/ppftool/options.go:10](https://github.com/sudachen/benchmark/blob/master/ppftool/options.go#L10)
 ```golang
 type Options struct {
     Unit // Second, Millisecond, Microsecond
@@ -368,7 +368,7 @@ Now the top command can be implemented easily.
 All I need is call pprof with set of arguments generated from Options and then convert temporal
 file to structured Report.
 
-[github.com/sudachen/benchmark/ppftool/top.go:11](https://github.com/sudachen/benchmark/blob/master/ppftool/top.go#L11)
+[benchmark/ppftool/top.go:11](https://github.com/sudachen/benchmark/blob/master/ppftool/top.go#L11)
 ```golang
 func Top(b []byte, o *Options) (*Report, error) {
     tempfile := TempFileName()
@@ -398,7 +398,7 @@ func Top(b []byte, o *Options) (*Report, error) {
 
 And now, finally, frendrly magic appears
 
-[github.com/sudachen/playground/docs/samples/pprof/magic4.go:12](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic4.go#L12)
+[playground/docs/samples/pprof/magic4.go:12](https://github.com/sudachen/playground/blob/master/docs/samples/pprof/magic4.go#L12)
 ```golang
 func main() {
     var bf bytes.Buffer
