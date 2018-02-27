@@ -5,6 +5,7 @@ google_analytics: UA-99577378-1
 repository: sudachen/playground
 excerpt_separator: <!--more-->
 baseurl: /playground
+comments: true
 github:
   repository_url: https://github.com/sudachen/Playground
 relative_links:

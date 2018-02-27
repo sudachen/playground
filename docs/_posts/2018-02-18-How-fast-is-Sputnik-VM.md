@@ -1,6 +1,7 @@
 ---
 layout: post
 title: How fast is Sputnik VM
+comments: false
 ---
 
 In december 2017, ETCDEV Team has added Sputnik VM to go-etherm client for ETC blockchain. 

@@ -34,7 +34,7 @@ So, there are two resonable questions: what exactly is the pprof/driver.Option a
 Since all functionality is in the internal package, the only way to use this funtionality,
 without modification the original code, to use the both pprof/driver.Option and pprof/driver.Pprof.
 
-The pprof/driver.Options is a set of object which can control the pprof actions
+The pprof/driver.Options is a set of objects which can control the pprof actions
 
 [pprof/driver/driver.go:55](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L55)
 ```golang
@@ -64,7 +64,7 @@ type UI interface {
 ```
 
 The **Options.Flagset** presents an object with logic similar to the standard flag.FlagSet.
-Pprof can operates with commandline arguments and options va this object.
+Pprof can access to commandline arguments and options via this object.
 
 [pprof/driver/driver.go:72](https://github.com/google/pprof/blob/db0be723d40dfbb90c702d493a71d398173358e7/driver/driver.go#L72)
 ```golang
