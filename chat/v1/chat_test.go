@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-const chatNodesCount = 16
+const chatNodesCount = 5
 
 func TestDiscovering(t *testing.T) {
 	ns := initialize(chatNodesCount, t)

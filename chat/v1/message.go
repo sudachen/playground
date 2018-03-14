@@ -1,13 +1,159 @@
 package v1
 
+import (
+	"bytes"
+	"errors"
+	"time"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto/sha3"
+)
+
 type Message struct {
-	Room       string    `json:"room"`
-	Nickname   string    `json:"nickname"`
-	PublicKey  []byte    `json:"pubKey,omitempty"`
-	Sig        string    `json:"sig"`
-	TTL        uint32    `json:"ttl,omitempty"`
-	Text       string    `json:"text"`
-	Peer 	   string    `json:"peer,omitempty"`
-	Timestamp  uint32    `json:"timestamp,omitempty"`
+	Room      string `json:"room"`
+	Nickname  string `json:"nickname"`
+	Text      string `json:"text"`
+	TTL       uint32 `json:"ttl,omitempty"`
+	Timestamp int64  `json:"timestamp,omitempty"` // ignored on seal
+	// currently message signing is not implemented
+	// Identity   string    `json:"identity,omitempty"`
 }
 
+type message struct {
+	cDeathtime int64        // cached death time
+	cHash      *common.Hash // cached message hash
+	body       []byte
+}
+
+func (m *message) validate() error {
+	return nil
+}
+
+func (m *message) deathTime() int64 {
+	if m.cDeathtime == 0 {
+		ts,_ := m.fetchTimestamp()
+		ttl,_:= m.fetchTTL()
+		m.cDeathtime = ts + int64(ttl)
+	}
+	return m.cDeathtime
+}
+
+func (m *message) hash() common.Hash {
+	if m.cHash == nil {
+		m.cHash = &common.Hash{}
+		d := sha3.NewKeccak256()
+		d.Write(m.body)
+		d.Sum(m.cHash[:0])
+	}
+	return *m.cHash
+}
+
+func (m *message) seal(mesg *Message) error {
+	var t int64
+	var l byte
+	var l2 uint16
+	var b bytes.Buffer
+
+	// timestamp
+	t = time.Now().Unix()
+	for n := 0; n < 8; n++ {
+		b.WriteByte(byte(t >> uint(n) * 8))
+	}
+
+	// ttl
+	for n := 0; n < 4; n++ {
+		b.WriteByte(byte(mesg.TTL >> uint(n) * 8))
+	}
+
+	// room
+	l = byte(len(mesg.Room))
+	b.WriteByte(l)
+	b.Write([]byte(mesg.Room)[:l])
+
+	// nickname
+	l = byte(len(mesg.Nickname))
+	b.WriteByte(l)
+	b.Write([]byte(mesg.Nickname)[:l])
+
+	// text
+	l2 = uint16(len(mesg.Text))
+	b.WriteByte(byte(l2))
+	b.WriteByte(byte(l2 >> 8))
+	b.Write([]byte(mesg.Text)[:l2])
+
+	m.body = b.Bytes()
+	return nil
+}
+
+var badMessageError = errors.New("bad message")
+
+func (m *message) fetchTimestamp() (int64, error) {
+	var ts int64
+	b := m.body
+	if len(b) < 8 {
+		return 0, badMessageError
+	}
+	for n := 0; n < 8; n++ {
+		ts |= int64(b[n]) << uint(n) * 8
+	}
+	return ts, nil
+}
+
+func (m *message) fetchTTL() (uint32, error) {
+	var ttl uint32
+	if len(m.body) < 8+4 {
+		return 0, badMessageError
+	}
+	b := m.body[8:]
+	for n := 0; n < 4; n++ {
+		ttl |= uint32(b[n]) << uint(n) * 8
+	}
+	return ttl, nil
+}
+
+func (m *message) open() (*Message, error) {
+	var l int
+	var b []byte
+	var err error
+
+	mesg := &Message{}
+
+	// timestamp
+	mesg.Timestamp, err = m.fetchTimestamp()
+	if err != nil {
+		return nil, err
+	}
+
+	// ttl
+	mesg.TTL, err = m.fetchTTL()
+	if err != nil {
+		return nil, err
+	}
+
+	b = m.body[12:]
+
+	// room
+	l = int(b[0])
+	if len(b) < l+1 {
+		return nil, badMessageError
+	}
+	mesg.Room = string(b[1 : l+1])
+	b = b[l+1:]
+
+	// nickname
+	l = int(b[0])
+	if len(b) < l+1 {
+		return nil, badMessageError
+	}
+	mesg.Nickname = string(b[1 : l+1])
+	b = b[l+1:]
+
+	// text
+	l = int(b[0]) + (int(b[0]) << 8)
+	if len(b) < l+1 {
+		return nil, badMessageError
+	}
+	mesg.Text = string(b[1 : l+1])
+
+	return mesg, nil
+}

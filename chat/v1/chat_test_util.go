@@ -1,19 +1,20 @@
 package v1
 
 import (
-	"testing"
-	"net"
-	"fmt"
 	"crypto/ecdsa"
+	"fmt"
+	"net"
+	"testing"
 
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/p2p"
 	"github.com/ethereum/go-ethereum/p2p/discover"
 	"github.com/ethereum/go-ethereum/p2p/nat"
 )
 
 const keysCount = 32
+
 var keys = [keysCount]string{
 	"d49dcf37238dc8a7aac57dc61b9fee68f0a97f062968978b9fafa7d1033d03a9",
 	"73fd6143c48e80ed3c56ea159fe7494a0b6b393a392227b422f4c3e8f1b54f98",
@@ -50,6 +51,7 @@ var keys = [keysCount]string{
 }
 
 type node struct {
+	c   	*Chat
 	id      *ecdsa.PrivateKey
 	server  *p2p.Server
 	filerID string
@@ -57,7 +59,7 @@ type node struct {
 
 type nodes []*node
 
-func initialize(nodesCount int, t *testing.T) (ns nodes){
+func initialize(nodesCount int, t *testing.T) (ns nodes) {
 	var err error
 	ip := net.IPv4(127, 0, 0, 1)
 	port0 := 30303
@@ -66,14 +68,13 @@ func initialize(nodesCount int, t *testing.T) (ns nodes){
 		t.Fatalf("to many nodes")
 	}
 
-	ns = make([]*node,0,nodesCount)
+	ns = make([]*node, 0, nodesCount)
 
 	for i := 0; i < nodesCount; i++ {
 		var node node
 
-		// setup protocol here
-
-		// start protocol here
+		node.c = New(nil)
+		node.c.Start(nil)
 
 		node.id, err = crypto.HexToECDSA(keys[i])
 		if err != nil {
@@ -105,7 +106,7 @@ func initialize(nodesCount int, t *testing.T) (ns nodes){
 			},
 		}
 
-		ns = append(ns,&node)
+		ns = append(ns, &node)
 	}
 
 	for i := 1; i < nodesCount; i++ {
@@ -120,14 +121,16 @@ func initialize(nodesCount int, t *testing.T) (ns nodes){
 	return
 }
 
+func (n *node) stop() {
+	n.server.Stop()
+	n.c.Stop()
+}
+
 func (ns nodes) stop() {
 	for i := 0; i < len(ns); i++ {
 		n := ns[i]
 		if n != nil {
-
-			// stop protocol here
-
-			n.server.Stop()
+			n.stop()
 		}
 	}
 }

@@ -1,12 +1,14 @@
 package v1
 
-const DefaultMaxMessageSize = uint32(1024)
+const DefaultMaxChatMessageSize int = 1024
+const DefaultMaxP2pMessageSize = DefaultMaxChatMessageSize * 10
 
 type Config struct {
-	MaxMessageSize     uint32  `toml:",omitempty"`
+	MaxP2pMessageSize  int `toml:",omitempty"`
+	MaxChatMessageSize int `toml:",omitempty"`
 }
 
 var DefaultConfig = Config{
-	MaxMessageSize:     DefaultMaxMessageSize,
+	MaxP2pMessageSize:  DefaultMaxP2pMessageSize,
+	MaxChatMessageSize: DefaultMaxChatMessageSize,
 }
-

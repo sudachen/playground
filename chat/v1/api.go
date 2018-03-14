@@ -1,12 +1,12 @@
 package v1
 
 import (
-	"time"
-	"sync"
 	"context"
+	"sync"
+	"time"
 )
 
-const apiWatchTimeout = time.Minute
+const apiExpireTimeout = time.Minute
 
 type ChatAPI struct {
 	c  *Chat
@@ -20,7 +20,7 @@ func NewChatAPI(c *Chat) *ChatAPI {
 }
 
 func (api *ChatAPI) run() {
-	timeout := time.NewTicker(apiWatchTimeout)
+	timeout := time.NewTicker(apiExpireTimeout)
 	for {
 		<-timeout.C
 
@@ -36,12 +36,13 @@ func (api *ChatAPI) Version(ctx context.Context) string {
 	return ProtocolVersionStr
 }
 
-func (api *ChatAPI) Post(ctx context.Context, m Message) (bool, error) {
-	return true, nil
+func (api *ChatAPI) Post(ctx context.Context, m *Message) error {
+	if err := api.c.Send(m); err != nil {
+		return err
+	}
+	return nil
 }
 
-func (api *ChatAPI) Poll(room string) (m []Message, err error) {
+func (api *ChatAPI) Poll(ctx context.Context, room string) (m []Message, err error) {
 	return
 }
-
-
