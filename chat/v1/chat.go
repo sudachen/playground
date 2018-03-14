@@ -1,14 +1,13 @@
 package v1
 
 import (
+	"time"
+	"errors"
+
 	"github.com/ethereum/go-ethereum/p2p"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/ethereum/go-ethereum/log"
-	"runtime"
-	"time"
-	"container/list"
-	"github.com/ethereumproject/go-ethereum/whisper"
-	"errors"
+	"sync"
 )
 
 const (
@@ -29,7 +28,10 @@ type Watcher interface {
 
 type Chat struct {
 	protocol p2p.Protocol
-	rooms map[string][]Watcher
+
+	wmu sync.Mutex
+	watchers []Watcher
+
 	queue chan *Message
 	quit chan struct{}
 }
@@ -42,7 +44,7 @@ func New(cfg *Config) *Chat {
 	c := &Chat{
 		queue:  make(chan *Message, messageQueueLimit),
 		quit:   make(chan struct{}),
-		rooms:  make(map[string][]Watcher),
+		watchers:  make([]Watcher,0),
 	}
 
 	c.protocol = p2p.Protocol{
@@ -93,18 +95,21 @@ func (c *Chat) update() {
 	}
 }
 
+func (c *Chat) watch(m *Message) {
+	c.wmu.Lock()
+	defer c.wmu.Unlock()
+	for _, w := range c.watchers {
+		w.Watch(m)
+	}
+}
+
 func (c *Chat) dequeue() {
 	for {
 		select {
 		case <-c.quit:
 			return
-
 		case m := <-c.queue:
-			if r, ok := c.rooms[m.Room]; ok {
-				for _, w := range r {
-					w.Watch(m)
-				}
-			}
+			c.watch(m)
 		}
 	}
 }
@@ -129,34 +134,30 @@ func (c *Chat) Stop() error {
 }
 
 var AlreadySubscribedError = errors.New("already subscribed")
-var NotSubscribedError = errors.New("not subscribed")
-
-func (c *Chat) Subscribe(room string, w Watcher) error {
-	if ws, ok := c.rooms[room]; ok {
-		for _, x := range ws {
-			if w == x {
-				return AlreadySubscribedError
-			}
+func (c *Chat) Subscribe(w Watcher) error {
+	c.wmu.Lock()
+	defer c.wmu.Unlock()
+	for _, x := range c.watchers {
+		if w == x {
+			return AlreadySubscribedError
 		}
-		ws = append(ws,w)
-	} else {
-		ws = []Watcher{w}
-		c.rooms[room] = ws
 	}
+	c.watchers = append(c.watchers,w)
 	return nil
 }
 
-func (c *Chat) Unsubscribe(room string, w Watcher) error {
-	if ws, ok := c.rooms[room]; ok {
-		for i, x := range ws {
-			if w == x {
-				L := len(ws) - 1
-				if L > 0 && i != L {
-					ws[i] = ws[L]
-				}
-				c.rooms[room] = ws[:L]
-				return nil
+var NotSubscribedError = errors.New("not subscribed")
+func (c *Chat) Unsubscribe(w Watcher) error {
+	c.wmu.Lock()
+	defer c.wmu.Unlock()
+	for i, x := range c.watchers {
+		if w == x {
+			L := len(c.watchers) - 1
+			if L > 0 && i != L {
+				c.watchers[i] = c.watchers[L]
 			}
+			c.watchers = c.watchers[:L]
+			return nil
 		}
 	}
 	return NotSubscribedError

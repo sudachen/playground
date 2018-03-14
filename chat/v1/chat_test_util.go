@@ -8,7 +8,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/p2p"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/sudachen/playground/chat/test"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/p2p/discover"
 	"github.com/ethereum/go-ethereum/p2p/nat"
@@ -76,7 +75,7 @@ func initialize(nodesCount int, t *testing.T) (ns nodes){
 
 		// start protocol here
 
-		node.id, err = crypto.HexToECDSA(test.Kyes[i])
+		node.id, err = crypto.HexToECDSA(keys[i])
 		if err != nil {
 			t.Fatalf("failed convert the key: %s", keys[i])
 		}
