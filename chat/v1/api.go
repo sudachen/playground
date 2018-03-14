@@ -6,7 +6,7 @@ import (
 	"context"
 )
 
-const apiFilterTimeout = 300
+const apiWatchTimeout = time.Minute
 
 type ChatAPI struct {
 	c  *Chat
@@ -20,7 +20,7 @@ func NewChatAPI(c *Chat) *ChatAPI {
 }
 
 func (api *ChatAPI) run() {
-	timeout := time.NewTicker(2 * time.Minute)
+	timeout := time.NewTicker(apiWatchTimeout)
 	for {
 		<-timeout.C
 

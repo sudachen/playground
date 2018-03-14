@@ -122,7 +122,7 @@ func (c *Chat) handlePeer(peer *p2p.Peer, rw p2p.MsgReadWriter) error {
 }
 
 func (c *Chat) Start(server *p2p.Server) error {
-	log.Info("started whisper v." + ProtocolVersionStr)
+	log.Info("started chat v." + ProtocolVersionStr)
 	go c.update()
 	go c.dequeue()
 	return nil
