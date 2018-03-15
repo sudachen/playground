@@ -1,9 +1,9 @@
 package v1
 
 import (
+	"errors"
 	"fmt"
 	"time"
-	"errors"
 
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/p2p"

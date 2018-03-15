@@ -19,9 +19,16 @@ type Message struct {
 	// Identity   string    `json:"identity,omitempty"`
 }
 
+func (mesg *Message) EqualNoStamp(a *Message) bool {
+	return  mesg.Room == a.Room &&
+		    mesg.Nickname == a.Nickname &&
+		   	mesg.Text == a.Text &&
+		   	mesg.TTL == a.TTL
+}
+
 func (mesg *Message) Hash() common.Hash {
 	var m message
-	m.encode(mesg,mesg.Timestamp)
+	m.encode(mesg, mesg.Timestamp)
 	return m.hash()
 }
 
@@ -37,8 +44,8 @@ func (m *message) validate() error {
 
 func (m *message) deathTime() int64 {
 	if m.cDeathtime == 0 {
-		ts,_ := m.fetchTimestamp()
-		ttl,_:= m.fetchTTL()
+		ts, _ := m.fetchTimestamp()
+		ttl, _ := m.fetchTTL()
 		m.cDeathtime = ts + int64(ttl)
 	}
 	return m.cDeathtime
@@ -97,7 +104,7 @@ func (m *message) encode(mesg *Message, timestamp int64) error {
 
 func (m *message) seal(mesg *Message) error {
 	t := time.Now().Unix()
-	return m.encode(mesg,t)
+	return m.encode(mesg, t)
 }
 
 var badMessageError = errors.New("bad message")

@@ -103,7 +103,7 @@ func New(cfg *Config) *Chat {
 
 	c := &Chat{
 		cfg:      *cfg,
-		ring:     &ring{known:make(map[common.Hash]int64)},
+		ring:     &ring{known: make(map[common.Hash]int64)},
 		queue:    make(chan *message, messageQueueLimit),
 		quit:     make(chan struct{}),
 		watchers: make([]Watcher, 0),
@@ -181,6 +181,9 @@ func (c *Chat) watch() {
 
 		index, m = c.ring.get(index)
 		for m != nil {
+
+			log.Trace("watch", "m", m)
+
 			if mesg, err := m.open(); err != nil {
 				log.Error("mesg open error", m, err)
 			} else {
@@ -197,6 +200,9 @@ func (c *Chat) watch() {
 func (c *Chat) watchMesg(mesg *Message) {
 	c.wmu.Lock()
 	defer c.wmu.Unlock()
+
+	log.Trace("watchMesg", "mesg", mesg)
+
 	if len(c.watchers) > 0 {
 		for _, w := range c.watchers {
 			w.Watch(mesg)
@@ -255,12 +261,14 @@ func (c *Chat) Unsubscribe(w Watcher) error {
 
 func (c *Chat) Send(mesg *Message) error {
 	m := &message{}
+	log.Trace("send", "mesg", mesg)
 	if err := m.seal(mesg); err != nil {
 		return err
 	}
 	if len(m.body) > c.MaxChatMessageSize() {
 		return errors.New("message to long")
 	}
+	log.Trace("enqueue", "m", m)
 	c.enqueue(m)
 	return nil
 }

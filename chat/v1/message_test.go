@@ -1,17 +1,17 @@
 package v1
 
 import (
-	"testing"
 	"fmt"
 	"math/rand"
+	"testing"
 )
 
 func TestMesgOpen(t *testing.T) {
 	ts := rand.Int63()
 	s := fmt.Sprintf("TEXT MESSAGE %v", rand.Int63())
-	mesg := &Message{Text:s,TTL:rand.Uint32()}
+	mesg := &Message{Text: s, TTL: rand.Uint32()}
 	m := &message{}
-	m.encode(mesg,ts)
+	m.encode(mesg, ts)
 	nm, err := m.open()
 	if err != nil {
 		t.Fatal(err)

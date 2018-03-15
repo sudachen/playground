@@ -19,3 +19,12 @@ func done2(q chan struct{}, t <-chan time.Time) bool {
 		return false
 	}
 }
+
+func trimQuotes(s string) string {
+	if len(s) >= 2 {
+		if s[0] == '"' && s[len(s)-1] == '"' {
+			return s[1 : len(s)-1]
+		}
+	}
+	return s
+}

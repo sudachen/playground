@@ -51,7 +51,7 @@ var keys = [keysCount]string{
 }
 
 type node struct {
-	c   	*Chat
+	c       *Chat
 	id      *ecdsa.PrivateKey
 	server  *p2p.Server
 	filerID string
@@ -115,7 +115,7 @@ func initialize(nodesCount int, t *testing.T) (ns nodes) {
 	for i := 0; i < nodesCount; i++ {
 		err = ns[i].server.Start()
 		if err != nil {
-			t.Fatalf("failed to start the server %d: %v",i,err)
+			t.Fatalf("failed to start the server %d: %v", i, err)
 		}
 	}
 
@@ -136,9 +136,9 @@ func (ns nodes) stop() {
 	}
 }
 
-func (n *node) send(room,text string) (common.Hash, error) {
+func (n *node) send(room, text string) (common.Hash, error) {
 	m := &message{}
-	if err := m.seal(&Message{Room: room, Text:text, TTL: 10000}); err != nil {
+	if err := m.seal(&Message{Room: room, Text: text, TTL: 10000}); err != nil {
 		return common.Hash{}, err
 	}
 	n.c.enqueue(m)
