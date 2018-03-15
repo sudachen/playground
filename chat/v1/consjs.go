@@ -30,5 +30,3 @@ web3._extend({
 });
 var cht = web3.cht;
 `
-
-

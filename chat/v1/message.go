@@ -20,10 +20,10 @@ type Message struct {
 }
 
 func (mesg *Message) EqualNoStamp(a *Message) bool {
-	return  mesg.Room == a.Room &&
-		    mesg.Nickname == a.Nickname &&
-		   	mesg.Text == a.Text &&
-		   	mesg.TTL == a.TTL
+	return mesg.Room == a.Room &&
+		mesg.Nickname == a.Nickname &&
+		mesg.Text == a.Text &&
+		mesg.TTL == a.TTL
 }
 
 func (mesg *Message) Hash() common.Hash {

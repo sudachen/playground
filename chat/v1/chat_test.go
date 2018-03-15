@@ -86,7 +86,7 @@ func TestPropagation(t *testing.T) {
 func TestOneMessage(t *testing.T) {
 	var err error
 	var ms []*Message
-	stk, _, con := startGethChat(t,29999, 0)
+	stk, _, con := startGethChat(t, 29999, 0)
 	out.Info.Print("READY TO WORK")
 
 	// subscribe on the room '.'
@@ -98,7 +98,7 @@ func TestOneMessage(t *testing.T) {
 		t.Fatal("unempty message list on start")
 	}
 
-	mesg := &Message{Room:".", Text:"HELLO", TTL: 10000}
+	mesg := &Message{Room: ".", Text: "HELLO", TTL: 10000}
 
 	// send message to the room '.'
 	err = con.Post(mesg)
@@ -117,7 +117,7 @@ WaitingLoop:
 		if len(ms) > 0 {
 			break WaitingLoop
 		}
-		<- time.After(100*time.Millisecond)
+		<-time.After(100 * time.Millisecond)
 	}
 
 	if len(ms) != 1 {

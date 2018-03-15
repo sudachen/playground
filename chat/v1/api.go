@@ -1,20 +1,20 @@
 package v1
 
 import (
+	"encoding/json"
+	"github.com/ethereum/go-ethereum/log"
 	"sync"
 	"time"
-	"github.com/ethereum/go-ethereum/log"
-	"encoding/json"
 )
 
 const apiExpireTimeout = time.Minute
 
 type ChatAPI struct {
-	c  *Chat
-	mu sync.Mutex
-	rooms map[string][]*Message
+	c        *Chat
+	mu       sync.Mutex
+	rooms    map[string][]*Message
 	lastPoll time.Time
-	w  *watcher
+	w        *watcher
 }
 
 func NewChatAPI(c *Chat) *ChatAPI {
@@ -71,7 +71,7 @@ func (api *ChatAPI) Poll(room string) (ms []*Message, err error) {
 func (api *ChatAPI) expire() {
 	for {
 		t := time.Now()
-		<- time.After(time.Minute)
+		<-time.After(time.Minute)
 		api.mu.Lock()
 		p := api.lastPoll
 		api.mu.Unlock()
@@ -96,6 +96,6 @@ func (w *watcher) Watch(m *Message) {
 	log.Trace("cht.watch", "m", m)
 
 	if x, ok := w.rooms[m.Room]; ok {
-		w.rooms[m.Room] = append(x,m)
+		w.rooms[m.Room] = append(x, m)
 	}
 }

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/ethereum/go-ethereum/params"
-	ethn "github.com/ethereum/go-ethereum/node"
-	cht "github.com/sudachen/playground/chat/v1"
-	"github.com/sudachen/misc/out"
-	_ "github.com/sudachen/playground/log/ethereum"
 	"github.com/ethereum/go-ethereum/console"
+	ethn "github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/params"
+	"github.com/sudachen/misc/out"
+	cht "github.com/sudachen/playground/chat/v1"
+	_ "github.com/sudachen/playground/log/ethereum"
 )
 
 func runConsole(listenAddr string) (err error) {
@@ -43,9 +43,9 @@ func runConsole(listenAddr string) (err error) {
 	}
 
 	cons, err := console.New(console.Config{
-		DataDir:  stk.InstanceDir(),
-		DocRoot:  "testdata",
-		Client:   clnt,
+		DataDir: stk.InstanceDir(),
+		DocRoot: "testdata",
+		Client:  clnt,
 	})
 
 	if err != nil {
@@ -72,4 +72,3 @@ func main() {
 		out.StdErr.Print(err)
 	}
 }
-

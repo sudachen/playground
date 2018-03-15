@@ -1,19 +1,19 @@
 package v1
 
 import (
-	"testing"
-	"flag"
-	"fmt"
-	"time"
-	"errors"
 	"bytes"
 	"encoding/json"
+	"errors"
+	"flag"
+	"fmt"
 	"strings"
+	"testing"
+	"time"
 
+	"github.com/ethereum/go-ethereum/console"
 	ethn "github.com/ethereum/go-ethereum/node"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/console"
 )
 
 func flagset(a ...string) *flag.FlagSet {
@@ -35,7 +35,7 @@ func startGethChat(t *testing.T, p2pPort int, rpcPort int, a ...string) (stk *et
 	ncfg.WSModules = append(ncfg.WSModules, "cht")
 	ncfg.IPCPath = "test-cht.ipc"
 	ncfg.HTTPPort = rpcPort
-	ncfg.P2P.ListenAddr = fmt.Sprintf("127.0.0.1:%d",p2pPort)
+	ncfg.P2P.ListenAddr = fmt.Sprintf("127.0.0.1:%d", p2pPort)
 
 	stk, err = ethn.New(&ncfg)
 	if err != nil {
@@ -114,7 +114,7 @@ type conn struct {
 	clnt  *rpc.Client
 }
 
-func (c *conn) Eval(js string) (string,error) {
+func (c *conn) Eval(js string) (string, error) {
 	c.prnt.Reset()
 	c.cons.Evaluate(js)
 	output := c.prnt.String()
@@ -126,26 +126,25 @@ func (c *conn) Post(mesg *Message) error {
 	if err != nil {
 		return err
 	}
-	r, err := c.Eval("cht.post("+string(b)+")")
+	r, err := c.Eval("cht.post(" + string(b) + ")")
 	if err != nil {
 		return err
 	}
 	if r != "true" {
-		return errors.New("unexpected output: "+r)
+		return errors.New("unexpected output: " + r)
 	}
 	return nil
 }
 
 func (c *conn) Poll(room string) (ms []*Message, err error) {
-	r, err := c.Eval("cht.pollStr(\""+room+"\");")
+	r, err := c.Eval("cht.pollStr(\"" + room + "\");")
 	if err != nil {
 		return
 	}
 	if r != "null" && r != "" {
 		var s string
-		err = json.Unmarshal([]byte(r),&s)
-		err = json.Unmarshal([]byte(s),&ms)
+		err = json.Unmarshal([]byte(r), &s)
+		err = json.Unmarshal([]byte(s), &ms)
 	}
 	return
 }
-
