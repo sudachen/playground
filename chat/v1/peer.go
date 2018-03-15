@@ -79,6 +79,8 @@ func (p *peer) broadcast() {
 }
 
 func (p *peer) handshake() error {
+	log.Trace("starting handshake with peer", p.ID())
+
 	ec := make(chan error, 1)
 	go func() {
 		ec <- p2p.SendItems(p.rw, statusCode, ProtocolVersion)
@@ -105,6 +107,7 @@ func (p *peer) handshake() error {
 	if err := <-ec; err != nil {
 		return fmt.Errorf("peer [%x] failed to send status packet: %v", p.ID(), err)
 	}
+	log.Trace("succeeded handshake with pear", p.ID())
 	return nil
 }
 

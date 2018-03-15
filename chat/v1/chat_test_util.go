@@ -55,6 +55,7 @@ type node struct {
 	id      *ecdsa.PrivateKey
 	server  *p2p.Server
 	filerID string
+	hashes  map[common.Hash]struct{}
 }
 
 type nodes []*node
@@ -62,7 +63,7 @@ type nodes []*node
 func initialize(nodesCount int, t *testing.T) (ns nodes) {
 	var err error
 	ip := net.IPv4(127, 0, 0, 1)
-	port0 := 30303
+	port0 := 29999
 
 	if nodesCount > keysCount {
 		t.Fatalf("to many nodes")
@@ -73,6 +74,7 @@ func initialize(nodesCount int, t *testing.T) (ns nodes) {
 	for i := 0; i < nodesCount; i++ {
 		var node node
 
+		node.hashes = make(map[common.Hash]struct{})
 		node.c = New(nil)
 		node.c.Start(nil)
 
@@ -81,7 +83,7 @@ func initialize(nodesCount int, t *testing.T) (ns nodes) {
 			t.Fatalf("failed convert the key: %s", keys[i])
 		}
 		port := port0 + i
-		addr := fmt.Sprintf(":%d", port) // e.g. ":30303"
+		addr := fmt.Sprintf(":%d", port)
 		name := common.MakeName("chat-go", "1.0")
 		var peers []*discover.Node
 		if i > 0 {
@@ -97,7 +99,7 @@ func initialize(nodesCount int, t *testing.T) (ns nodes) {
 				PrivateKey:     node.id,
 				MaxPeers:       nodesCount/2 + 1,
 				Name:           name,
-				Protocols:      nil,
+				Protocols:      node.c.Protocols(),
 				ListenAddr:     addr,
 				NAT:            nat.Any(),
 				BootstrapNodes: peers,
@@ -106,16 +108,15 @@ func initialize(nodesCount int, t *testing.T) (ns nodes) {
 			},
 		}
 
+		node.c.Subscribe(&node)
 		ns = append(ns, &node)
 	}
 
-	for i := 1; i < nodesCount; i++ {
-		go ns[i].server.Start()
-	}
-
-	err = ns[0].server.Start()
-	if err != nil {
-		t.Fatalf("failed to start the fisrt server.")
+	for i := 0; i < nodesCount; i++ {
+		err = ns[i].server.Start()
+		if err != nil {
+			t.Fatalf("failed to start the server %d: %v",i,err)
+		}
 	}
 
 	return
@@ -133,4 +134,17 @@ func (ns nodes) stop() {
 			n.stop()
 		}
 	}
+}
+
+func (n *node) send(room,text string) (common.Hash, error) {
+	m := &message{}
+	if err := m.seal(&Message{Room: room, Text:text, TTL: 10000}); err != nil {
+		return common.Hash{}, err
+	}
+	n.c.enqueue(m)
+	return m.hash(), nil
+}
+
+func (n *node) Watch(mesg *Message) {
+	n.hashes[mesg.Hash()] = struct{}{}
 }

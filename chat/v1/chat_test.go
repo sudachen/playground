@@ -2,14 +2,79 @@ package v1
 
 import (
 	"testing"
+	"time"
+
+	"github.com/ethereum/go-ethereum/common"
+	_ "github.com/sudachen/playground/log/ethereum"
+	"github.com/sudachen/misc/out"
+	"fmt"
 )
 
-const chatNodesCount = 5
+const chatNodesCount = 6
+const chatMesgsCount = 2
 
-func TestDiscovering(t *testing.T) {
+func init() {
+	out.Error.SetCurrent()
+}
+
+func TestPropagation(t *testing.T) {
 	ns := initialize(chatNodesCount, t)
+	out.Info.Printf("%d nodes started",len(ns))
 
-	// do some work here
+	hs := make(map[common.Hash]string)
+
+	<- time.After(5*time.Second)
+	out.Info.Print("SENDING MESSAGES ...")
+
+	// sending unique messages via every node
+	for i := 0; i < chatMesgsCount; i++ {
+		for j, n := range ns {
+			s := fmt.Sprintf("test message %d via node %d",i,j)
+			h,err := n.send("",s)
+			if err != nil { t.Fatal(err) }
+			hs[h] = s
+		}
+	}
+
+	<- time.After(5*time.Second)
+	out.Info.Print("SENDING FINALIZATION MESSAGE ...")
+
+	finmesg,err := ns[0].send("", "END")
+	if err != nil { t.Fatal(err) }
+
+	// waiting until all nodes recive END message
+	for j, n := range ns {
+		succeeded := false
+	WaitForEndMesg:
+		for i:=0; i < 20; i++ { // 2 Seconds
+			if _,ok := n.hashes[finmesg]; ok {
+				succeeded = true
+				break WaitForEndMesg
+			}
+			<- time.After(100*time.Millisecond)
+		}
+		if ( !succeeded ) {
+			t.Fatalf("node %d has not recived END message", j)
+		}
+	}
+
+	out.Info.Print("CHECKING PROPAGATION FOR MESSAGES")
+	for h,s := range hs {
+		out.Info.Printf("%s\n\t%s",h.Hex(),s)
+	}
+
+	// check all nodes recived all test messages
+	for j, n := range ns {
+		count := 0
+		for v := range hs {
+			if _, ok := n.hashes[v]; !ok {
+				count++
+			}
+		}
+		if count != 0 {
+			t.Errorf("node %d lost %d of %d messages",j,count,len(hs))
+		}
+	}
 
 	ns.stop()
 }

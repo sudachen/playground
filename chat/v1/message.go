@@ -19,6 +19,12 @@ type Message struct {
 	// Identity   string    `json:"identity,omitempty"`
 }
 
+func (mesg *Message) Hash() common.Hash {
+	var m message
+	m.encode(mesg,mesg.Timestamp)
+	return m.hash()
+}
+
 type message struct {
 	cDeathtime int64        // cached death time
 	cHash      *common.Hash // cached message hash
@@ -48,41 +54,50 @@ func (m *message) hash() common.Hash {
 	return *m.cHash
 }
 
-func (m *message) seal(mesg *Message) error {
-	var t int64
+func (m *message) encode(mesg *Message, timestamp int64) error {
 	var l byte
 	var l2 uint16
 	var b bytes.Buffer
 
 	// timestamp
-	t = time.Now().Unix()
 	for n := 0; n < 8; n++ {
-		b.WriteByte(byte(t >> uint(n) * 8))
+		b.WriteByte(byte(timestamp >> (uint(n) * 8)))
 	}
 
 	// ttl
 	for n := 0; n < 4; n++ {
-		b.WriteByte(byte(mesg.TTL >> uint(n) * 8))
+		b.WriteByte(byte(mesg.TTL >> (uint(n) * 8)))
 	}
 
 	// room
 	l = byte(len(mesg.Room))
 	b.WriteByte(l)
-	b.Write([]byte(mesg.Room)[:l])
+	if l > 0 {
+		b.Write([]byte(mesg.Room)[:l])
+	}
 
 	// nickname
 	l = byte(len(mesg.Nickname))
 	b.WriteByte(l)
-	b.Write([]byte(mesg.Nickname)[:l])
+	if l > 0 {
+		b.Write([]byte(mesg.Nickname)[:l])
+	}
 
 	// text
 	l2 = uint16(len(mesg.Text))
 	b.WriteByte(byte(l2))
 	b.WriteByte(byte(l2 >> 8))
-	b.Write([]byte(mesg.Text)[:l2])
+	if l2 > 0 {
+		b.Write([]byte(mesg.Text)[:l2])
+	}
 
 	m.body = b.Bytes()
 	return nil
+}
+
+func (m *message) seal(mesg *Message) error {
+	t := time.Now().Unix()
+	return m.encode(mesg,t)
 }
 
 var badMessageError = errors.New("bad message")
@@ -94,7 +109,7 @@ func (m *message) fetchTimestamp() (int64, error) {
 		return 0, badMessageError
 	}
 	for n := 0; n < 8; n++ {
-		ts |= int64(b[n]) << uint(n) * 8
+		ts |= int64(b[n]) << (uint(n) * 8)
 	}
 	return ts, nil
 }
@@ -106,7 +121,7 @@ func (m *message) fetchTTL() (uint32, error) {
 	}
 	b := m.body[8:]
 	for n := 0; n < 4; n++ {
-		ttl |= uint32(b[n]) << uint(n) * 8
+		ttl |= uint32(b[n]) << (uint(n) * 8)
 	}
 	return ttl, nil
 }
@@ -149,11 +164,11 @@ func (m *message) open() (*Message, error) {
 	b = b[l+1:]
 
 	// text
-	l = int(b[0]) + (int(b[0]) << 8)
+	l = int(b[0]) + (int(b[1]) << 8)
 	if len(b) < l+1 {
 		return nil, badMessageError
 	}
-	mesg.Text = string(b[1 : l+1])
+	mesg.Text = string(b[2 : l+2])
 
 	return mesg, nil
 }

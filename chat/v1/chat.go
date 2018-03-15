@@ -103,10 +103,11 @@ func New(cfg *Config) *Chat {
 
 	c := &Chat{
 		cfg:      *cfg,
-		ring:     &ring{},
+		ring:     &ring{known:make(map[common.Hash]int64)},
 		queue:    make(chan *message, messageQueueLimit),
 		quit:     make(chan struct{}),
 		watchers: make([]Watcher, 0),
+		peers:    make(map[*peer]struct{}),
 	}
 
 	c.protocol = p2p.Protocol{
@@ -181,7 +182,7 @@ func (c *Chat) watch() {
 		index, m = c.ring.get(index)
 		for m != nil {
 			if mesg, err := m.open(); err != nil {
-				// log?
+				log.Error("mesg open error", m, err)
 			} else {
 				c.watchMesg(mesg)
 			}
